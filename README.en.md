@@ -1,36 +1,37 @@
 # security-web
 
-#### Description
-基于java web层的安全框架，目前已适配springboot/springcloud框架
+#### Introduction
+A security permission authentication framework based on the java web layer
 
 #### Software Architecture
-Software architecture description
+Developed based on JDK17
+It is currently compatible with springboot3.0+
+Support distributed microservice systems
+Supports Redis-based data caching, with default data caching in memory
 
-#### Installation
+#### currently supports features
+1. Login authentication (supports customization and multiple authentication methods)
+2. Based on login authentication
+3. Character authentication
+4. Permission code authentication
+5. Support custom authentication methods
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Instructions
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+#### To be improved
+1. Support for oauth2 is still under development (temporarily unavailable).
+2. More web framework adaptations
+3. bug to be tested
 
 
-#### Gitee Feature
+#### Installation Guide
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+1. Pull the branch code
+2. You can directly import the project through maven or compile it into a jar package and then import it into the project
+
+#### Instructions for Use
+
+1. Introduce dependencies
+2. Use the @EnabledSecurity annotation to mark it in the main program entry
+3. Just start the project
+
+#### Note
+If you have any questions, please contact me (project developer) at **tx1611235218@gmail.com**.
