@@ -1,37 +1,38 @@
 # security-web
 
 #### 介绍
-基于java web层的安全框架，目前已适配springboot/springcloud框架
+一个基于java web层的安全权限认证框架
 
 #### 软件架构
-软件架构说明
+基于JDK17开发
+目前已适配springboot3.0+
+支持分布式微服务系统
+支持基于redis的数据缓存，默认数据缓存至内存中
+
+#### 目前支持功能
+1.  登录认证（支持自定义、多种认证方式）
+2. 基于登录鉴权
+3. 角色鉴权
+4. 权限码鉴权
+5. 支持自定义鉴权方式
+
+#### 待完善
+1.  oauth2的支持，目前还在开发中（暂不能使用）
+2. 更多web框架适配
+3. bug待测试
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  拉取分支代码
+2.  直接通过maven引入项目或者编译为jar包在引入到项目中即可
 
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  引入依赖
+2.  使用@EnabledSecurity注解标注至主程序入口中
+3.  启动项目即可
 
-#### 参与贡献
+#### 注意
+有任何问题可通过邮箱**tx1611235218@gmail.com**联系我（项目开发者）
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
