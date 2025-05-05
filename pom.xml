@@ -15,6 +15,24 @@
         <module>security-springboot-starter</module>
     </modules>
 
+    <!-- 开源协议 apache 2.0 -->
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <!-- 作者信息 -->
+    <developers>
+        <developer>
+            <name>ByTan</name>
+            <email>tx1611235218@gmail.com</email>
+        </developer>
+    </developers>
+
     <properties>
         <revision>1.0.0</revision>
         <!-- 编译属性 -->
@@ -55,7 +73,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-configuration-processor</artifactId>
                 <version>${springboot.version}</version>
-                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>jakarta.servlet</groupId>

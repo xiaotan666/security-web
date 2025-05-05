@@ -11,6 +11,14 @@
   <artifactId>security-dao-springboot-redis</artifactId>
   <version>1.0.0</version>
   <description>系统安全框架-基于springboot-redis的dao扩展</description>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>

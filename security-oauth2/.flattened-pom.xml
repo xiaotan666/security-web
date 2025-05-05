@@ -11,6 +11,14 @@
   <artifactId>security-oauth2</artifactId>
   <version>1.0.0</version>
   <description>web权限安全框架-oauth2适配</description>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>com.bytan.security</groupId>
