@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>security-oauth2</artifactId>
-    <description>web权限安全框架-oauth2适配</description>
+    <description>基于oauth2适配扩展</description>
     <packaging>jar</packaging>
 
     <dependencies>

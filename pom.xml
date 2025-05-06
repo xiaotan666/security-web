@@ -5,7 +5,7 @@
     <groupId>com.bytan.security</groupId>
     <artifactId>security-parent</artifactId>
     <version>${revision}</version>
-    <description>权限安全框架</description>
+    <description>基于Java Web层的权限安全认证框架</description>
     <packaging>pom</packaging>
 
     <modules>

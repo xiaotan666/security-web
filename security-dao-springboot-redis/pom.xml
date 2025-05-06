@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>security-dao-springboot-redis</artifactId>
-    <description>系统安全框架-基于springboot-redis的dao扩展</description>
+    <description>基于springboot-redis适配的缓存策略扩展</description>
     <packaging>jar</packaging>
 
     <dependencies>

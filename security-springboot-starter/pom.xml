@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>security-springboot-starter</artifactId>
-    <description>系统安全框架-springboot启动器</description>
+    <description>集成springboot启动器</description>
     <packaging>jar</packaging>
 
     <dependencies>

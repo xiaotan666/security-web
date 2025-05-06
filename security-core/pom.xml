@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>security-core</artifactId>
-    <description>权限安全框架核心</description>
+    <description>框架核心</description>
     <packaging>jar</packaging>
 
     <dependencies>
