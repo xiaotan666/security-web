@@ -114,13 +114,10 @@ public class AuthenticationRealm extends AuthenticationTokenRealm {
      * @return true通过
      */
     public boolean hasAuthentication(String accessToken) {
-        if (StrUtil.isBlank(accessToken)) {
-            return false;
-        }
-        if (StrUtil.isNotBlank(SubjectContext.getSubjectId())) {
+        if (StrUtil.isNotBlank(SubjectContext.getSubjectId())){
             return true;
         }
-        if (hasAccessToken(accessToken)) {
+        if (StrUtil.isNotBlank(accessToken) && hasAccessToken(accessToken)) {
             String subjectId = parseAccessToken(accessToken);
             if (StrUtil.isNotBlank(subjectId)) {
                 SubjectContext.setSubjectId(subjectId);

@@ -13,6 +13,7 @@
         <module>security-oauth2</module>
         <module>security-dao-springboot-redis</module>
         <module>security-springboot-starter</module>
+        <module>security-demo</module>
     </modules>
 
     <!-- 开源协议 apache 2.0 -->
@@ -67,6 +68,11 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
                 <version>${springboot.version}</version>
             </dependency>
             <dependency>

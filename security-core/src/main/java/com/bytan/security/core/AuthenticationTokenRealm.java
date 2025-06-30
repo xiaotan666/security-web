@@ -55,11 +55,10 @@ public abstract class AuthenticationTokenRealm implements SubjectType {
             JWTValidator.of(accessToken)
                     .validateAlgorithm(JWTSignerUtil.hs256(getSubjectType().getBytes()))
                     .validateDate();
+            return true;
         } catch (ValidateException e) {
             return false;
         }
-
-        return true;
     }
 
     /**
