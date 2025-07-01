@@ -1,10 +1,7 @@
 package com.bytan.security.core.http;
 
-import cn.hutool.json.JSONUtil;
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -36,19 +33,11 @@ public class SecurityServletRequest implements SecurityRequest {
         return request.getParameterMap();
     }
 
-    @Override
-    public Map<String, Object> getBody() {
-        try {
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            BufferedReader bufferedReader = request.getReader();
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
 
-            return JSONUtil.parseObj(stringBuilder);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public String toString() {
+        return "SecurityServletRequest{" +
+                "request=" + request +
+                '}';
     }
 }

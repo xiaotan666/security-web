@@ -31,10 +31,4 @@ public interface SecurityRequest {
      */
     Map<String, String[]> getParameterMap();
 
-    /**
-     * 获取请求体
-     * @return Map<String, Object>
-     */
-    Map<String, Object> getBody();
-
 }

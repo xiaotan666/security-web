@@ -14,12 +14,12 @@
     <remote-repository>
       <option name="id" value="public" />
       <option name="name" value="aliyun nexus" />
-      <option name="url" value="file://C:\Users\xitan\.m2\repository" />
+      <option name="url" value="https://maven.aliyun.com/nexus/content/groups/public/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="public" />
       <option name="name" value="aliyun nexus" />
-      <option name="url" value="https://maven.aliyun.com/nexus/content/groups/public/" />
+      <option name="url" value="file://C:\Users\xitan\.m2\repository" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

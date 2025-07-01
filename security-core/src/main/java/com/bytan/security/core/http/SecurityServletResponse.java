@@ -16,4 +16,10 @@ public class SecurityServletResponse implements SecurityResponse {
         this.response = response;
     }
 
+    @Override
+    public String toString() {
+        return "SecurityServletResponse{" +
+                "response=" + response +
+                '}';
+    }
 }

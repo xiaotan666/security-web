@@ -1,7 +1,7 @@
 package com.bytan.security.core.data.loader;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 身份数据加载器默认实现
@@ -12,13 +12,13 @@ import java.util.List;
 public class DefaultAuthenticationDataLoader extends AuthenticationDataLoader {
 
     @Override
-    public List<String> doGetRolePermission(String role) {
-        return new ArrayList<>();
+    public Set<String> doGetRolePermission(String role) {
+        return new HashSet<>();
     }
 
     @Override
-    public List<String> doGetSubjectRole(String subjectId) {
-        return new ArrayList<>();
+    public Set<String> doGetSubjectRole(String subjectId) {
+        return new HashSet<>();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.bytan.security.core.context;
 
-import com.alibaba.ttl.TransmittableThreadLocal;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,9 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ThreadContext {
 
-    protected ThreadContext() {}
+    private static final ThreadLocal<Map<String, Object>> ThreadLocal = new ThreadLocal<>();
 
-    private static final TransmittableThreadLocal<Map<String, Object>> ThreadLocal = new TransmittableThreadLocal<>();
+    protected ThreadContext() {}
 
     /**
      * 设置上下文线程存储变量

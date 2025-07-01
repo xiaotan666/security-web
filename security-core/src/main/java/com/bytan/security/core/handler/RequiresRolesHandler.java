@@ -6,7 +6,7 @@ import com.bytan.security.core.annotation.RequiresRoles;
 import com.bytan.security.core.subject.SubjectContext;
 import com.bytan.security.core.exception.AuthenticationException;
 
-import java.util.Arrays;
+import java.util.Set;
 
 import static com.bytan.security.core.exception.AuthenticationException.NOT_PERMISSION;
 
@@ -32,7 +32,10 @@ public class RequiresRolesHandler extends AuthenticationAnnotationHandler<Requir
         String subjectType = annotation.type();
         AuthenticationRealm authentication = getSubjectAuthenticationRealm(subjectType);
 
-        if (!authentication.hasAuthentication(this.getRequestAccessToken(subjectType)) || !authentication.hasSubjectRole(SubjectContext.getSubjectId(), Arrays.asList(annotation.value()))) {
+        if (!authentication.hasAuthentication(this.getRequestAccessToken(subjectType))) {
+            throw new AuthenticationException(AuthenticationException.USER_NOT_LOGIN);
+        }
+        if (!authentication.hasSubjectRole(SubjectContext.getSubjectId(), Set.of(annotation.value()))) {
             throw new AuthenticationException(NOT_PERMISSION);
         }
     }

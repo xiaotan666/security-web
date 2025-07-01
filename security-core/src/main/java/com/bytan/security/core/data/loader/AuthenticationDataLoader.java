@@ -1,7 +1,7 @@
 package com.bytan.security.core.data.loader;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 身份权限信息加载器
@@ -16,40 +16,40 @@ public abstract class AuthenticationDataLoader extends InteriorCacheAuthenticati
      * @param role 角色
      * @return 权限列表
      */
-    public abstract List<String> doGetRolePermission(String role);
+    public abstract Set<String> doGetRolePermission(String role);
 
     /**
      * 自定义获取主体关联的角色信息（当缓存拿不到数据时，就会调用该接口）
      * @param subjectId 主体id
      * @return 角色列表
      */
-    public abstract List<String> doGetSubjectRole(String subjectId);
+    public abstract Set<String> doGetSubjectRole(String subjectId);
 
     @Override
-    public List<String> getRolePermission(String role) {
-        List<String> rolePermissionList = super.getRolePermission(role);
+    public Set<String> getRolePermission(String role) {
+        Set<String> rolePermissionList = super.getRolePermission(role);
         if (rolePermissionList == null || rolePermissionList.isEmpty()) {
             rolePermissionList = doGetRolePermission(role);
             if (rolePermissionList != null && !rolePermissionList.isEmpty()) {
                 this.setRolePermission(role, rolePermissionList);
             } else {
-                rolePermissionList = new ArrayList<>();
+                rolePermissionList = new HashSet<>();
             }
         }
         return rolePermissionList;
     }
 
     @Override
-    public List<String> getSubjectRole(String subjectId) {
-        List<String> subjecthRoleList = super.getSubjectRole(subjectId);
-        if (subjecthRoleList == null || subjecthRoleList.isEmpty()) {
-            subjecthRoleList = doGetSubjectRole(subjectId);
-            if (subjecthRoleList != null && !subjecthRoleList.isEmpty()) {
-                this.setSubjectRole(subjectId, subjecthRoleList);
+    public Set<String> getSubjectRole(String subjectId) {
+        Set<String> subjectRoleList = super.getSubjectRole(subjectId);
+        if (subjectRoleList == null || subjectRoleList.isEmpty()) {
+            subjectRoleList = doGetSubjectRole(subjectId);
+            if (subjectRoleList != null && !subjectRoleList.isEmpty()) {
+                this.setSubjectRole(subjectId, subjectRoleList);
             } else {
-                subjecthRoleList = new ArrayList<>();
+                subjectRoleList = new HashSet<>();
             }
         }
-        return subjecthRoleList;
+        return subjectRoleList;
     }
 }

@@ -4,8 +4,7 @@ import com.bytan.security.core.data.loader.AuthenticationDataLoader;
 import com.bytan.security.core.subject.SubjectType;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @Author：ByTan
@@ -14,14 +13,15 @@ import java.util.List;
  */
 @Component
 public class DemoDataLoader extends AuthenticationDataLoader {
+
     @Override
-    public List<String> doGetRolePermission(String role) {
-        return List.of();
+    public Set<String> doGetRolePermission(String role) {
+        return Set.of("permissions_admin");
     }
 
     @Override
-    public List<String> doGetSubjectRole(String subjectId) {
-        return Collections.singletonList("admin");
+    public Set<String> doGetSubjectRole(String subjectId) {
+        return Set.of("admin");
     }
 
     @Override

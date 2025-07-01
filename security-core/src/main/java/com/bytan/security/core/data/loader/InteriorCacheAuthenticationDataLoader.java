@@ -3,8 +3,8 @@ package com.bytan.security.core.data.loader;
 import com.bytan.security.core.data.dao.SecurityDao;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -41,7 +41,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param role           角色信息
      * @param permissionList 权限信息
      */
-    public void setRolePermission(String role, List<String> permissionList) {
+    public void setRolePermission(String role, Set<String> permissionList) {
         this.setRolePermission(
                 new HashMap<String, Object>() {{
                     put(role, permissionList);
@@ -55,7 +55,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param role 角色
      * @return 权限列表
      */
-    public List<String> getRolePermission(String role) {
+    public Set<String> getRolePermission(String role) {
         return this.securityDao.getByMap(buildLoaderKey(Role_Permission_Key), role);
     }
 
@@ -75,7 +75,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param subjectId 主体id
      * @param roleList  拥有的角色
      */
-    public void setSubjectRole(String subjectId, List<String> roleList) {
+    public void setSubjectRole(String subjectId, Set<String> roleList) {
         setSubjectRole(
                 new HashMap<String, Object>() {{
                     put(subjectId, roleList);
@@ -89,7 +89,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param subjectId 主体id
      * @return 角色列表
      */
-    public List<String> getSubjectRole(String subjectId) {
+    public Set<String> getSubjectRole(String subjectId) {
         return this.securityDao.getByMap(buildLoaderKey(Subject_Role_Key), subjectId);
     }
 

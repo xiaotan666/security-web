@@ -6,7 +6,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Objects;
@@ -18,8 +17,6 @@ import java.util.concurrent.TimeUnit;
  * @Eamil: tx1611235218@gmail.com
  * @Date: 2024/12/24  23:45
  */
-@Component
-@SuppressWarnings(value = { "unchecked" })
 public class SpringRedisDao implements SecurityDao {
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -32,7 +29,7 @@ public class SpringRedisDao implements SecurityDao {
         if (Objects.isNull(redisTemplate)) {
             JdkSerializationRedisSerializer serializer = new JdkSerializationRedisSerializer();
 
-            RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+            RedisTemplate<String, Object> template = new RedisTemplate<>();
             template.setConnectionFactory(connectionFactory);
             // 使用StringRedisSerializer来序列化和反序列化redis的key值
             template.setKeySerializer(new StringRedisSerializer());
@@ -78,12 +75,14 @@ public class SpringRedisDao implements SecurityDao {
         saveBatchByMap(key, objMap);
     }
 
+    @SuppressWarnings(value = { "unchecked" })
     @Override
     public <T> T get(String key) {
         Object value = redisTemplate.opsForValue().get(key);
         return value == null ? null : (T) value;
     }
 
+    @SuppressWarnings(value = { "unchecked" })
     @Override
     public <T> T getByMap(String key, String field) {
         Object value = redisTemplate.opsForHash().get(key, field);
