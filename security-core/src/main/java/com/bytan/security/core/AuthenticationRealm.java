@@ -1,16 +1,21 @@
 package com.bytan.security.core;
 
+import com.bytan.security.core.config.AccessTokenConfig;
+import com.bytan.security.core.data.dao.SecurityDao;
 import com.bytan.security.core.data.loader.AuthenticationDataLoader;
-import com.bytan.security.core.config.SecurityTokenConfig;
+import com.bytan.security.core.exception.AuthenticationException;
 import com.bytan.security.core.subject.SubjectContext;
+import com.bytan.security.core.subject.SubjectType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 身份验证相关功能实现
@@ -18,14 +23,62 @@ import java.util.Set;
  * @Eamil: tx1611235218@gmail.com
  * @Date: 2024/12/10  23:41
  */
-public class AuthenticationRealm {
+public class AuthenticationRealm implements SubjectType {
 
     private final AuthenticationDataLoader authenticationDataLoader;
-    private final SecurityTokenConfig tokenConfig;
+    private final AccessTokenConfig tokenConfig;
+    private final SecretKey signKey;
+    private final SecretKey encryptKey;
 
-    public AuthenticationRealm(AuthenticationDataLoader authenticationDataLoader, SecurityTokenConfig tokenConfig) {
+    public AuthenticationRealm(AuthenticationDataLoader authenticationDataLoader, AccessTokenConfig tokenConfig) {
         this.tokenConfig = tokenConfig;
         this.authenticationDataLoader = authenticationDataLoader;
+        this.signKey = getSignKey();
+        this.encryptKey = getEncryptKey();
+    }
+
+    /**
+     * 获取加密密钥
+     * @return 加密密钥
+     */
+    private SecretKey getEncryptKey() {
+        String encryptKey = tokenConfig.getSignKey();
+        if (encryptKey != null && !encryptKey.isEmpty()) {
+            return Keys.hmacShaKeyFor(Decoders.BASE64.decode(encryptKey));
+        } else {
+            String encryptDaoKey = authenticationDataLoader.buildLoaderKey("secret_key");
+            SecurityDao securityDao = authenticationDataLoader.getSecurityDao();
+            encryptKey = securityDao.get(encryptDaoKey);
+            if (encryptKey != null && !encryptKey.isEmpty()) {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(encryptKey));
+            } else {
+                SecretKey secretKey = Jwts.SIG.HS256.key().build();
+                securityDao.save(encryptDaoKey, Encoders.BASE64.encode(secretKey.getEncoded()));
+                return secretKey;
+            }
+        }
+    }
+
+    /**
+     * 获取签名密钥
+     * @return 签名密钥
+     */
+    private SecretKey getSignKey() {
+        String signKey = tokenConfig.getSignKey();
+        if (signKey != null && !signKey.isEmpty()) {
+            return Keys.hmacShaKeyFor(Decoders.BASE64.decode(signKey));
+        } else {
+            String signDaoKey = authenticationDataLoader.buildLoaderKey("encrypt_key");
+            SecurityDao securityDao = authenticationDataLoader.getSecurityDao();
+            signKey = securityDao.get(signDaoKey);
+            if (signKey != null && !signKey.isEmpty()) {
+                return Keys.hmacShaKeyFor(Decoders.BASE64.decode(signKey));
+            } else {
+                SecretKey secretKey = Jwts.SIG.HS512.key().build();
+                securityDao.save(signDaoKey, Encoders.BASE64.encode(secretKey.getEncoded()));
+                return secretKey;
+            }
+        }
     }
 
     /**
@@ -111,69 +164,123 @@ public class AuthenticationRealm {
     }
 
     /**
-     * 是否通过身份验证
+     * 当前访问是否合法
      *
-     * @param accessToken 访问密钥
-     * @return true通过
+     * @param accessToken 访问令牌
      */
-    public boolean hasAuthentication(String accessToken) {
-        String subjectId = SubjectContext.getSubjectId();
-        if (subjectId != null) {
-            return true;
-        }
-        if (accessToken != null && hasAccessToken(accessToken)) {
-            subjectId = parseAccessToken(accessToken);
-        }
+    public void isAuthentication(String accessToken) {
+        if (accessToken != null && !accessToken.isEmpty()) {
+            try {
+                String subjectId = parseAccessToken(accessToken);
+                if (subjectId != null && !subjectId.isEmpty()) {
+                    Set<String> subjectTokenList = authenticationDataLoader.getSubjectAccessToken(subjectId);
+                    boolean match = subjectTokenList.contains(accessToken);
+                    if (!match) {
+                        throw new AuthenticationException();
+                    }
+                    SubjectContext.setSubjectId(subjectId);
+                }
+            } catch (JwtException e) {
+                throw new AuthenticationException();
+            }
+        } else {
+            String subjectId = SubjectContext.getSubjectId();
+            if (subjectId != null && !subjectId.isEmpty()) {
+                return;
+            }
 
-        if (subjectId != null) {
-            SubjectContext.setSubjectId(subjectId);
-            return true;
+            throw new AuthenticationException(AuthenticationException.USER_NOT_LOGIN);
         }
-        return false;
     }
 
     /**
-     * 获取访问密钥
+     * 生成访问令牌
      *
      * @param subjectId 主体id
-     * @return 访问密钥
+     * @return 访问令牌
      */
-    public String getAccessToken(String subjectId) {
-        return Jwts.builder()
+    public String generateAccessToken(String subjectId) {
+        //签名
+        String jws = Jwts.builder()
                 .subject(subjectId)
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plus(tokenConfig.getTimeout(), ChronoUnit.SECONDS)))
-                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(authenticationDataLoader.getSubjectType())), Jwts.SIG.HS512)
+                .signWith(signKey)
                 .compact();
+        //加密签名结果
+        String jwe = Jwts.builder()
+                .content(jws.getBytes(StandardCharsets.UTF_8), "application/jwt")
+                .encryptWith(encryptKey, Jwts.KEY.DIRECT, Jwts.ENC.A128CBC_HS256)
+                .compact();
+
+        String prefix = tokenConfig.getPrefix();
+        String accessToken = prefix != null && !prefix.isEmpty() ? prefix + " " + jwe : jwe;
+        addSubjectAccessToken(subjectId, accessToken);
+        return accessToken;
     }
 
     /**
-     * 判断访问密钥的是否合法
-     *
-     * @param accessToken 访问密钥
-     * @return 是否合法
-     */
-    public boolean hasAccessToken(String accessToken) {
-        try {
-            return parseAccessToken(accessToken) != null;
-        } catch (JwtException e) {
-            return false;
-        }
-    }
-
-    /**
-     * 解析访问密钥里面的主体id
+     * 解析访问令牌里面的主体id
      *
      * @param accessToken 访问密钥
      * @return 主体id
      */
     public String parseAccessToken(String accessToken) {
-        Claims claims = Jwts.parser()
-                .decryptWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(authenticationDataLoader.getSubjectType())))
+        String prefix = tokenConfig.getPrefix();
+        String token = prefix != null && !prefix.isEmpty() ?  accessToken.substring(prefix.length() + 1) : accessToken;
+
+        byte[] jws = Jwts.parser()
+                .decryptWith(encryptKey)
                 .build()
-                .parseEncryptedClaims(accessToken)
+                .parseEncryptedContent(token)
                 .getPayload();
+        Claims claims = Jwts.parser()
+                .verifyWith(signKey)
+                .build()
+                .parseSignedClaims(new String(jws, StandardCharsets.UTF_8))
+                .getPayload();
+
         return claims.getSubject();
     }
 
+    /**
+     * 回收访问令牌
+     * @param accessToken 访问令牌
+     */
+    public void recycleAccessToken(String subjectId, String accessToken) {
+        Set<String> subjectToken = authenticationDataLoader.getSubjectAccessToken(subjectId);
+        if (subjectToken == null) {
+            subjectToken = new HashSet<>();
+        }
+        subjectToken.remove(accessToken);
+        authenticationDataLoader.setSubjectAccessToken(subjectId, subjectToken);
+    }
+
+    /**
+     * 回收主体所有访问令牌
+     * @param subjectId 主体id
+     */
+    public void recycleAccessTokenBySubject(String subjectId) {
+        authenticationDataLoader.setSubjectAccessToken(subjectId, Set.of());
+    }
+
+    /**
+     * 添加主体令牌信息
+     * @param subjectId 主体id
+     * @param accessToken 访问令牌
+     */
+    public void addSubjectAccessToken(String subjectId, String accessToken) {
+        Set<String> subjectToken = authenticationDataLoader.getSubjectAccessToken(subjectId);
+        if (subjectToken == null) {
+            subjectToken = new HashSet<>();
+        }
+
+        subjectToken.add(accessToken);
+        authenticationDataLoader.setSubjectAccessToken(subjectId, subjectToken);
+    }
+
+    @Override
+    public String getSubjectType() {
+        return authenticationDataLoader.getSubjectType();
+    }
 }

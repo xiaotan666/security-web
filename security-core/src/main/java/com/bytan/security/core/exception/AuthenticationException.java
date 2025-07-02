@@ -13,11 +13,10 @@ public class AuthenticationException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public static final String USER_NOT_LOGIN = "用户未登录";
-    public static final String NOT_PERMISSION = "没有权限";
-    public static final String NOT_SCOPE = "用户未授权";
+    public static final String USER_NOT_LOGIN = "账号未登录";
+    public static final String NOT_PERMISSION = "账号未授权";
 
-    private String message = "身份验证失败，请联系管理员";
+    private String message = "身份信息已过期，请重新登录";
 
     public AuthenticationException() {}
 

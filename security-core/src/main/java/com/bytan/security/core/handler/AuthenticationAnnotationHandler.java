@@ -1,7 +1,7 @@
 package com.bytan.security.core.handler;
 
 import com.bytan.security.core.AuthenticationRealm;
-import com.bytan.security.core.config.SecurityTokenConfig;
+import com.bytan.security.core.config.AccessTokenConfig;
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.http.SecurityRequest;
 
@@ -19,7 +19,7 @@ public abstract class AuthenticationAnnotationHandler<A extends Annotation> exte
 
     public AuthenticationAnnotationHandler(SecurityManager securityManager) {
         if (securityManager == null) {
-            throw new NullPointerException("securityManager must not be null");
+            throw new NullPointerException("核心管理器未加载");
         }
         this.securityManager = securityManager;
     }
@@ -34,13 +34,13 @@ public abstract class AuthenticationAnnotationHandler<A extends Annotation> exte
     }
 
     /**
-     * 获取访问token
+     * 获取请求中的访问token
      * @param subjectType 主体类型
      * @return AccessToken
      */
     protected String getRequestAccessToken(String subjectType) {
         SecurityRequest request = securityManager.getHttpContext().getRequest();
-        SecurityTokenConfig tokenConfig = securityManager.getTokenConfig(subjectType);
-        return request.getHeader(tokenConfig.getTokenName());
+        AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(subjectType);
+        return request.getHeader(tokenConfig.getRequestHeader());
     }
 }

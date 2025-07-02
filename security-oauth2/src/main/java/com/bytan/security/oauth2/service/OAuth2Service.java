@@ -2,7 +2,7 @@ package com.bytan.security.oauth2.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.bytan.security.core.AuthenticationRealm;
-import com.bytan.security.core.config.SecurityTokenConfig;
+import com.bytan.security.core.config.AccessTokenConfig;
 import com.bytan.security.oauth2.Oauth2Realm;
 import com.bytan.security.oauth2.SecurityOauth2Manager;
 import com.bytan.security.oauth2.config.SecurityOauth2TokenConfig;
@@ -74,7 +74,7 @@ public class OAuth2Service extends AbstractSecurityOauth2Service {
         model.setAccessToken(accessToken);
         String refreshToken = oauth2Realm.getRefreshToken(subjectId);
         model.setRefreshToken(refreshToken);
-        SecurityTokenConfig tokenConfig = securityManager.getTokenConfig(subjectType);
+        AccessTokenConfig tokenConfig = securityManager.getTokenConfig(subjectType);
         model.setExpiresIn(tokenConfig.getTimeout());
         SecurityOauth2TokenConfig oauth2TokenConfig = securityOauth2Manager.getOauth2TokenConfig(subjectType);
         model.setRefreshExpiresIn(oauth2TokenConfig.getRefreshTimeout());

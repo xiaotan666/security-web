@@ -1,9 +1,11 @@
 package com.bytan.security.core.service;
 
 import com.bytan.security.core.AuthenticationRealm;
+import com.bytan.security.core.config.AccessTokenConfig;
+import com.bytan.security.core.http.SecurityRequest;
 import com.bytan.security.core.service.model.LoginModel;
-import com.bytan.security.core.provider.AuthenticationProvider;
 import com.bytan.security.core.SecurityManager;
+import com.bytan.security.core.subject.SubjectContext;
 
 import java.util.Map;
 
@@ -28,25 +30,39 @@ public class AuthenticationService extends AbstractSecurityService {
     }
 
     /**
-     * 登录业务
+     * 登录
      * @param param 请求携带的参数
-     * @return LoginModel
+     * @return LoginModel 登录响应模型
      */
     public LoginModel login(Map<String, Object> param) {
-        AuthenticationProvider authenticationProvider = securityManager.getAuthenticationProvider(this.getSubjectType());
-        String subjectId = authenticationProvider.loadLoginSubjectId(param);
-        AuthenticationRealm authenticationRealm = securityManager.getAuthenticationRealm(this.getSubjectType());
-        String token = authenticationRealm.getAccessToken(subjectId);
+        String subjectId = securityManager.getAuthenticationProvider(this.getSubjectType())
+                .loadLoginSubjectId(param);
+        String accessToken = securityManager.getAuthenticationRealm(this.getSubjectType())
+                .generateAccessToken(subjectId);
 
         LoginModel loginModel = new LoginModel();
-        loginModel.setAccessToken(token);
+        loginModel.setAccessToken(accessToken);
         loginModel.setSubjectId(subjectId);
-
         return loginModel;
     }
 
-//    public void logout(String subjectType, String subjectId) {
-//
-//    }
+    /**
+     * 登出
+     */
+    public void logout() {
+        AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(this.getSubjectType());
+        SecurityRequest request = securityManager.getHttpContext().getRequest();
+        String accessToken = request.getHeader(tokenConfig.getRequestHeader());
+        logout(accessToken, SubjectContext.getSubjectId());
+    }
 
+    /**
+     * 登出
+     * @param accessToken 访问token
+     * @param subjectId 主体id
+     */
+    public void logout(String accessToken, String subjectId) {
+        AuthenticationRealm authenticationRealm = securityManager.getAuthenticationRealm(this.getSubjectType());
+        authenticationRealm.recycleAccessToken(subjectId, accessToken);
+    }
 }

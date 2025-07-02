@@ -18,12 +18,24 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
     /**
      * 角色与权限
      */
-    public String Role_Permission_Key = "security:authentication:role_permission";
-
+    public String[] Role_Permission_Key = {"role_permission"};
     /**
      * 主体与角色
      */
-    public String Subject_Role_Key = "security:authentication:subject_role";
+    public String[] Subject_Role_Key = {"subject_role"};
+    /**
+     * 主体关联访问令牌key
+     */
+    public String[] Subject_AccessToken_Key = {"access_token"};
+
+    /**
+     * 构建数据加载器的键
+     * @param keys 键
+     * @return dao的键
+     */
+    public String buildLoaderKey(String ...keys) {
+        return "security" + ":" + "authentication" + ":" + this.getSubjectType() + ":" + String.join(":", keys);
+    }
 
     /**
      * 设置角色权限信息
@@ -31,8 +43,9 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param rolePermissionMap 角色权限信息
      */
     public void setRolePermission(Map<String, Object> rolePermissionMap) {
-        this.securityDao.saveBatchByMap(buildLoaderKey(Role_Permission_Key), rolePermissionMap);
-        this.securityDao.expire(buildLoaderKey(Role_Permission_Key), SecurityDao.NOT_EXPIRE);
+        String key = buildLoaderKey(Role_Permission_Key);
+        securityDao.saveBatchByMap(key, rolePermissionMap);
+        securityDao.expire(key, SecurityDao.NOT_EXPIRE);
     }
 
     /**
@@ -42,7 +55,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param permissionList 权限信息
      */
     public void setRolePermission(String role, Set<String> permissionList) {
-        this.setRolePermission(
+        setRolePermission(
                 new HashMap<String, Object>() {{
                     put(role, permissionList);
                 }}
@@ -56,7 +69,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @return 权限列表
      */
     public Set<String> getRolePermission(String role) {
-        return this.securityDao.getByMap(buildLoaderKey(Role_Permission_Key), role);
+        return securityDao.getByMap(buildLoaderKey(Role_Permission_Key), role);
     }
 
     /**
@@ -65,8 +78,9 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param subjectRoleMap 主体角色信息
      */
     public void setSubjectRole(Map<String, Object> subjectRoleMap) {
-        this.securityDao.saveBatchByMap(buildLoaderKey(Subject_Role_Key), subjectRoleMap);
-        this.securityDao.expire(buildLoaderKey(Subject_Role_Key), SecurityDao.NOT_EXPIRE);
+        String key = buildLoaderKey(Subject_Role_Key);
+        securityDao.saveBatchByMap(key, subjectRoleMap);
+        securityDao.expire(key, SecurityDao.NOT_EXPIRE);
     }
 
     /**
@@ -84,13 +98,32 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
     }
 
     /**
-     * 获取密钥信息
+     * 获取主体角色信息
      *
      * @param subjectId 主体id
      * @return 角色列表
      */
     public Set<String> getSubjectRole(String subjectId) {
-        return this.securityDao.getByMap(buildLoaderKey(Subject_Role_Key), subjectId);
+        return securityDao.getByMap(buildLoaderKey(Subject_Role_Key), subjectId);
     }
 
+    /**
+     * 设置主体与访问令牌信息
+     * @param subjectId 主体id
+     * @param tokenList 令牌列表
+     */
+    public void setSubjectAccessToken(String subjectId, Set<String> tokenList) {
+        String key = buildLoaderKey(Subject_AccessToken_Key);
+        securityDao.saveByMap(key, subjectId, tokenList);
+        securityDao.expire(key, SecurityDao.NOT_EXPIRE);
+    }
+
+    /**
+     * 获取主体与访问令牌信息
+     * @param subjectId 主体id
+     * @return 主体与访问令牌列表
+     */
+    public Set<String> getSubjectAccessToken(String subjectId) {
+        return securityDao.getByMap(buildLoaderKey(Subject_AccessToken_Key), subjectId);
+    }
 }

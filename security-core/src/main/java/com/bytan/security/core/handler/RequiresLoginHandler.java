@@ -27,8 +27,12 @@ public class RequiresLoginHandler extends AuthenticationAnnotationHandler<Requir
         String subjectType = annotation.type();
         AuthenticationRealm authenticationRealm = this.getSubjectAuthenticationRealm(subjectType);
 
-        if (!authenticationRealm.hasAuthentication(this.getRequestAccessToken(subjectType)) && annotation.required()) {
-            throw new AuthenticationException(AuthenticationException.USER_NOT_LOGIN);
+        try {
+            authenticationRealm.isAuthentication(this.getRequestAccessToken(subjectType));
+        } catch (AuthenticationException e) {
+            if (annotation.required()) {
+                throw new AuthenticationException(e.getMessage());
+            }
         }
     }
 }

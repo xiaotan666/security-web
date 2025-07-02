@@ -5,6 +5,7 @@ import com.bytan.security.core.annotation.RequiresPermissions;
 import com.bytan.security.core.annotation.RequiresRoles;
 import com.bytan.security.core.http.SecurityRequest;
 import com.bytan.security.core.http.SecurityResponse;
+import com.bytan.security.core.service.AuthenticationService;
 import com.bytan.security.core.subject.SubjectContext;
 import com.bytan.security.core.subject.SubjectType;
 import com.bytan.security.springboot.starter.endpoint.AuthenticationEndpoint;
@@ -35,6 +36,15 @@ public class DemoController extends AuthenticationEndpoint {
     @GetMapping("/login")
     public Object login(SecurityRequest request, SecurityResponse response) {
         return super.login(request, response);
+    }
+
+    @RequiresLogin(type = SubjectType.ADMIN)
+    @ResponseBody
+    @GetMapping("/logout")
+    public Object logout() {
+        AuthenticationService authenticationService = getAuthenticationService();
+        authenticationService.logout();
+        return "已登出账号";
     }
 
     @RequiresLogin(type = SubjectType.ADMIN)

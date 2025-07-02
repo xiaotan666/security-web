@@ -10,7 +10,7 @@ import com.bytan.security.core.subject.SubjectContext;
 
 import java.util.Arrays;
 
-import static com.bytan.security.core.exception.AuthenticationException.NOT_SCOPE;
+import static com.bytan.security.core.exception.AuthenticationException.NOT_PERMISSION;
 
 /**
  * 授权范围处理器
@@ -35,7 +35,7 @@ public class RequiresScopeHandler extends Oauth2AnnotationHandler<RequiresScope>
         Oauth2Realm oauth2Realm = getSubjectOauth2Realm(subjectType);
         AuthenticationRealm authenticationRealm = getSubjectAuthenticationRealm(subjectType);
         if (!authenticationRealm.hasAuthentication(this.getRequestAccessToken(subjectType)) || !oauth2Realm.hasAuthScope(SubjectContext.getSubjectId(), Arrays.asList(annotation.value()))) {
-            throw new AuthenticationException(NOT_SCOPE);
+            throw new AuthenticationException(NOT_PERMISSION);
         }
     }
 }

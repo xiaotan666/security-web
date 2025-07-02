@@ -32,9 +32,7 @@ public class RequiresPermissionsHandler extends AuthenticationAnnotationHandler<
         String subjectType = annotation.type();
         AuthenticationRealm authentication = getSubjectAuthenticationRealm(subjectType);
 
-        if (!authentication.hasAuthentication(this.getRequestAccessToken(subjectType))) {
-            throw new AuthenticationException(AuthenticationException.USER_NOT_LOGIN);
-        }
+        authentication.isAuthentication(this.getRequestAccessToken(subjectType));
         if (!authentication.hasSubjectPermission(SubjectContext.getSubjectId(), Set.of(annotation.value()))) {
             throw new AuthenticationException(NOT_PERMISSION);
         }
