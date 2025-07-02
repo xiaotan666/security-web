@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- 项目信息 -->
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.bytan.security</groupId>
-    <artifactId>security-parent</artifactId>
+    <groupId>com.bytan</groupId>
+    <artifactId>security-web-parent</artifactId>
     <version>${revision}</version>
+    <name>security-web</name>
     <description>基于Java Web层的权限安全认证框架</description>
     <packaging>pom</packaging>
 
+    <!-- 模块定义 -->
     <modules>
-        <module>security-core</module>
-        <module>security-oauth2</module>
-        <module>security-dao-springboot-redis</module>
-        <module>security-springboot-starter</module>
-        <module>security-demo</module>
+        <module>security-web-core</module>
+        <module>security-web-oauth2</module>
+        <module>security-web-dao</module>
+        <module>security-web-springboot-starter</module>
+        <module>security-web-demo</module>
+        <module>security-web-dependencies</module>
+        <module>security-web-dao</module>
+        <module>security-web-springboot</module>
+        <module>security-web-oauth2-springboot-starter</module>
     </modules>
 
     <!-- 开源协议 apache 2.0 -->
@@ -34,6 +41,7 @@
         </developer>
     </developers>
 
+    <!-- 属性定义 -->
     <properties>
         <revision>1.0.0</revision>
         <!-- 编译属性 -->
@@ -44,57 +52,17 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- maven属性 -->
         <maven.test.skip>false</maven.test.skip>
-        <!-- 插件版本 -->
-        <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
-        <!-- 依赖版本 -->
-        <servlet.version>6.1.0</servlet.version>
-        <hutool.version>5.8.27</hutool.version>
-        <springboot.version>3.0.0</springboot.version>
-        <transmittable.version>2.14.5</transmittable.version>
-        <caffeine.version>3.2.1</caffeine.version>
     </properties>
 
+    <!-- 版本管理 -->
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>transmittable-thread-local</artifactId>
-                <version>${transmittable.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>${springboot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${springboot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-aop</artifactId>
-                <version>${springboot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-configuration-processor</artifactId>
-                <version>${springboot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${servlet.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
+                <groupId>com.bytan</groupId>
+                <artifactId>security-web-dependencies</artifactId>
+                <version>${revision}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -124,12 +92,13 @@
         </pluginRepository>
     </pluginRepositories>
 
+    <!-- 编译插件 -->
     <build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>${flatten-maven-plugin.version}</version>
+                <version>1.3.0</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -153,5 +122,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

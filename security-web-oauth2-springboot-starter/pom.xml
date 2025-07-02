@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.bytan</groupId>
+        <artifactId>security-web-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <name>security-web-oauth2-springboot-starter</name>
+    <artifactId>security-web-oauth2-springboot-starter</artifactId>
+    <description>适配oauth2基于springboot框架启动器</description>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bytan</groupId>
+            <artifactId>security-web-oauth2</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bytan</groupId>
+            <artifactId>security-web-springboot-starter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+</project>

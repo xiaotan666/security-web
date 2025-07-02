@@ -1,9 +1,0 @@
-com.bytan.security.springboot.starter.interceptor.SecurityInterceptorAutoConfigure
-com.bytan.security.springboot.starter.poperties.SecurityPropertiesAutoConfigure
-com.bytan.security.springboot.starter.SecurityDaoAutoConfigure
-com.bytan.security.springboot.starter.web.SecurityHttpContextAutoConfigure
-com.bytan.security.springboot.starter.web.WebMvcConfigurer
-
-com.bytan.security.springboot.starter.oauth2.SecurityOAuth2AutoConfigure
-com.bytan.security.springboot.starter.oauth2.SecurityOauth2InterceptorAutoConfigure
-com.bytan.security.springboot.starter.oauth2.properties.SecurityOauth2PropertiesAutoConfigure

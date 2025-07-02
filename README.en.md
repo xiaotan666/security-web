@@ -17,8 +17,8 @@ Supports Redis-based data caching, with default data caching in memory
 5. Support custom authentication methods
 
 #### To be improved
-1. Support for oauth2 is still under development (temporarily unavailable).
-2. More web framework adaptations
+1. Currently, it is a development preview version. The official version is to be released
+2. Support for oauth2 is still under development (temporarily unavailable)
 3. bug to be tested
 
 

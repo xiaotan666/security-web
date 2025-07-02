@@ -1,0 +1,4 @@
+com.bytan.security.springboot.starter.interceptor.SecurityInterceptorAutoConfigure
+com.bytan.security.springboot.starter.poperties.SecurityPropertiesAutoConfigure
+com.bytan.security.springboot.starter.SecurityHttpContextAutoConfigure
+com.bytan.security.springboot.starter.WebMvcConfigurer
