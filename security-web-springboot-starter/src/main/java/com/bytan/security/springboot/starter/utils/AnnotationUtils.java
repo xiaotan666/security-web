@@ -1,4 +1,4 @@
-package com.bytan.security.springboot.utils;
+package com.bytan.security.springboot.starter.utils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -1,11 +1,8 @@
 package com.bytan.security.core.service;
 
 import com.bytan.security.core.AuthenticationRealm;
-import com.bytan.security.core.config.AccessTokenConfig;
-import com.bytan.security.core.http.SecurityRequest;
 import com.bytan.security.core.service.model.LoginModel;
 import com.bytan.security.core.SecurityManager;
-import com.bytan.security.core.subject.SubjectContext;
 
 import java.util.Map;
 
@@ -44,16 +41,6 @@ public class AuthenticationService extends AbstractSecurityService {
         loginModel.setAccessToken(accessToken);
         loginModel.setSubjectId(subjectId);
         return loginModel;
-    }
-
-    /**
-     * 登出
-     */
-    public void logout() {
-        AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(this.getSubjectType());
-        SecurityRequest request = securityManager.getHttpContext().getRequest();
-        String accessToken = request.getHeader(tokenConfig.getRequestHeader());
-        logout(accessToken, SubjectContext.getSubjectId());
     }
 
     /**

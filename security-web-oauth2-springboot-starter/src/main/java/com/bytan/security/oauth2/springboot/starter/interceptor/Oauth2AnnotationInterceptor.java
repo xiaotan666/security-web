@@ -4,7 +4,7 @@ import com.bytan.security.core.SecurityManager;
 import com.bytan.security.oauth2.SecurityOauth2Manager;
 import com.bytan.security.oauth2.handler.Oauth2AnnotationHandler;
 import com.bytan.security.oauth2.handler.RequiresScopeHandler;
-import com.bytan.security.springboot.interceptor.AnnotationInterceptor;
+import com.bytan.security.springboot.starter.interceptor.AnnotationInterceptor;
 
 import java.lang.annotation.Annotation;
 

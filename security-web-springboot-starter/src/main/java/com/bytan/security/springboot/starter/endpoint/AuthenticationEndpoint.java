@@ -1,9 +1,11 @@
 package com.bytan.security.springboot.starter.endpoint;
 
+import com.bytan.security.core.config.AccessTokenConfig;
 import com.bytan.security.core.http.SecurityRequest;
 import com.bytan.security.core.http.SecurityResponse;
 import com.bytan.security.core.service.AuthenticationService;
 import com.bytan.security.core.SecurityManager;
+import com.bytan.security.core.subject.SubjectContext;
 import com.bytan.security.core.subject.SubjectType;
 import jakarta.annotation.Resource;
 
@@ -40,7 +42,7 @@ public abstract class AuthenticationEndpoint implements SubjectType {
     }
 
     /**
-     * 登录
+     * 登录用户
      * @param request 当前请求
      * @param response 响应
      * @return Object
@@ -55,4 +57,17 @@ public abstract class AuthenticationEndpoint implements SubjectType {
         return getAuthenticationService().login(parameterMap);
     }
 
+    /**
+     * 用户登出
+     * @param request 当前请求
+     * @param response 响应
+     * @return Object
+     */
+    public Object logout(SecurityRequest request, SecurityResponse response) {
+        AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(this.getSubjectType());
+        String accessToken = request.getHeader(tokenConfig.getRequestHeader());
+        getAuthenticationService().logout(accessToken, SubjectContext.getSubjectId());
+
+        return "success";
+    }
 }

@@ -1,4 +1,4 @@
-package com.bytan.security.springboot.exception;
+package com.bytan.security.springboot.starter.exception;
 
 import java.io.Serial;
 

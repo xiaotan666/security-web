@@ -1,4 +1,4 @@
-package com.bytan.security.springboot.utils;
+package com.bytan.security.springboot.starter.utils;
 
 import com.bytan.security.springboot.starter.exception.NotWebContextException;
 import jakarta.servlet.http.HttpServletRequest;

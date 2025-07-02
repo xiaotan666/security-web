@@ -9,13 +9,23 @@
     </parent>
     <name>security-web-springboot-starter</name>
     <artifactId>security-web-springboot-starter</artifactId>
-    <description>基于springboot框架启动器</description>
+    <description>适配springboot框架的启动器</description>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.bytan</groupId>
-            <artifactId>security-web-springboot</artifactId>
+            <artifactId>security-web-core</artifactId>
             <version>${revision}</version>
         </dependency>
     </dependencies>

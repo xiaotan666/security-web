@@ -1,7 +1,8 @@
-package com.bytan.security.springboot.starter.interceptor;
+package com.bytan.security.springboot.starter;
 
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.handler.AuthenticationAnnotationHandler;
+import com.bytan.security.springboot.starter.interceptor.AuthenticationAnnotationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;

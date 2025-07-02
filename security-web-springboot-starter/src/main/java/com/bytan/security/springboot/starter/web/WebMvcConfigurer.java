@@ -1,8 +1,7 @@
-package com.bytan.security.springboot.starter;
+package com.bytan.security.springboot.starter.web;
 
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.context.HttpContext;
-import com.bytan.security.springboot.web.HttpContextMethodArgumentResolver;
 import jakarta.annotation.Resource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

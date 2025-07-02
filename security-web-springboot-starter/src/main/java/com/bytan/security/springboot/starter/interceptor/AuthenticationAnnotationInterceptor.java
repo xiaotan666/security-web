@@ -5,7 +5,6 @@ import com.bytan.security.core.handler.RequiresLoginHandler;
 import com.bytan.security.core.handler.RequiresPermissionsHandler;
 import com.bytan.security.core.handler.RequiresRolesHandler;
 import com.bytan.security.core.SecurityManager;
-import com.bytan.security.springboot.interceptor.AnnotationInterceptor;
 
 import java.lang.annotation.Annotation;
 

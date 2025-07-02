@@ -1,7 +1,7 @@
-package com.bytan.security.springboot.interceptor;
+package com.bytan.security.springboot.starter.interceptor;
 
 import com.bytan.security.core.handler.AnnotationHandler;
-import com.bytan.security.springboot.utils.AnnotationUtils;
+import com.bytan.security.springboot.starter.utils.AnnotationUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;

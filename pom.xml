@@ -19,7 +19,6 @@
         <module>security-web-demo</module>
         <module>security-web-dependencies</module>
         <module>security-web-dao</module>
-        <module>security-web-springboot</module>
         <module>security-web-oauth2-springboot-starter</module>
     </modules>
 
