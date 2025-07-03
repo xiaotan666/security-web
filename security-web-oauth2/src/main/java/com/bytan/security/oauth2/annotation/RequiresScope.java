@@ -1,7 +1,7 @@
 package com.bytan.security.oauth2.annotation;
 
 /**
- * 需要授权范围
+ * 校验授权范围
  * @Author：ByTan
  * @Email：tx1611235218@gmail.com
  * @Date：2024/12/30 9:03

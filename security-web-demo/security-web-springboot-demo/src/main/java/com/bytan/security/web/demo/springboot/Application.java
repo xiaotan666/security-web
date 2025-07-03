@@ -1,10 +1,10 @@
 package com.bytan.security.web.demo.springboot;
 
-import com.bytan.security.springboot.starter.EnabledSecurity;
+import com.bytan.security.springboot.starter.EnabledSecurityWeb;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@EnabledSecurity
+@EnabledSecurityWeb
 @SpringBootApplication
 public class Application {
 

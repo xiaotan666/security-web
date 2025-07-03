@@ -20,7 +20,7 @@ public abstract class Oauth2AnnotationHandler<T extends Annotation> extends Auth
     public Oauth2AnnotationHandler(SecurityManager securityManager, SecurityOauth2Manager securityOauth2Manager) {
         super(securityManager);
         if (securityOauth2Manager == null) {
-            throw new NullPointerException("securityOauth2Manager must not be null");
+            throw new NullPointerException("核心管理器未成功加载");
         }
         this.securityOauth2Manager = securityOauth2Manager;
     }

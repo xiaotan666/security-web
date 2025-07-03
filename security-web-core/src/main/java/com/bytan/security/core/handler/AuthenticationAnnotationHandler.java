@@ -19,7 +19,7 @@ public abstract class AuthenticationAnnotationHandler<A extends Annotation> exte
 
     public AuthenticationAnnotationHandler(SecurityManager securityManager) {
         if (securityManager == null) {
-            throw new NullPointerException("核心管理器未加载");
+            throw new NullPointerException("核心管理器未成功加载");
         }
         this.securityManager = securityManager;
     }

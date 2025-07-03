@@ -8,18 +8,18 @@
     <version>${revision}</version>
     <name>security-web</name>
     <description>基于Java Web层的权限安全认证框架</description>
+    <url>https://github.com/xiaotan666/security-web</url>
     <packaging>pom</packaging>
 
     <!-- 模块定义 -->
     <modules>
+        <module>security-web-dependencies</module>
         <module>security-web-core</module>
         <module>security-web-oauth2</module>
         <module>security-web-dao</module>
         <module>security-web-springboot-starter</module>
-        <module>security-web-demo</module>
-        <module>security-web-dependencies</module>
-        <module>security-web-dao</module>
         <module>security-web-oauth2-springboot-starter</module>
+        <module>security-web-demo</module>
     </modules>
 
     <!-- 开源协议 apache 2.0 -->

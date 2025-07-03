@@ -2,7 +2,7 @@ package com.bytan.security.springboot.starter;
 
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.context.HttpContext;
-import com.bytan.security.springboot.web.DefaultHttpContext;
+import com.bytan.security.springboot.starter.web.DefaultHttpContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

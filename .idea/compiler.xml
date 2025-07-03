@@ -7,10 +7,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="security-web-oauth2" />
-        <module name="security-web-springboot-starter" />
         <module name="security-web-core" />
         <module name="security-web-springboot-demo" />
         <module name="security-web-dao-springboot-redis" />
+        <module name="security-web-springboot-starter" />
         <module name="security-web-oauth2-springboot-starter" />
       </profile>
     </annotationProcessing>

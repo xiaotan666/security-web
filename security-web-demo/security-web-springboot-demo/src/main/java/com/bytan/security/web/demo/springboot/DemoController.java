@@ -1,5 +1,6 @@
 package com.bytan.security.web.demo.springboot;
 
+import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.annotation.RequiresLogin;
 import com.bytan.security.core.annotation.RequiresPermissions;
 import com.bytan.security.core.annotation.RequiresRoles;
@@ -9,6 +10,7 @@ import com.bytan.security.core.service.AuthenticationService;
 import com.bytan.security.core.subject.SubjectContext;
 import com.bytan.security.core.subject.SubjectType;
 import com.bytan.security.springboot.starter.endpoint.AuthenticationEndpoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/admin")
 public class DemoController extends AuthenticationEndpoint {
+
+    @Autowired
+    public DemoController(SecurityManager securityManager) {
+        super(securityManager);
+    }
 
     /**
      * 区分认证类型
@@ -41,9 +48,8 @@ public class DemoController extends AuthenticationEndpoint {
     @RequiresLogin(type = SubjectType.ADMIN)
     @ResponseBody
     @GetMapping("/logout")
-    public Object logout() {
-        AuthenticationService authenticationService = getAuthenticationService();
-        authenticationService.logout();
+    public Object logout(SecurityRequest request, SecurityResponse response) {
+        super.logout(request, response);
         return "已登出账号";
     }
 

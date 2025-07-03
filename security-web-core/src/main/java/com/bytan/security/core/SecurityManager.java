@@ -115,9 +115,9 @@ public class SecurityManager {
     }
 
     /**
-     * 获取身份信息处理器
+     * 获取身份信息处理类
      * @param subjectType 主体类型
-     * @return AuthenticationRealm 处理器
+     * @return AuthenticationRealm 处理类
      */
     public AuthenticationRealm getAuthenticationRealm(String subjectType) {
         AuthenticationRealm authenticationRealm = this.authenticationRealmStorage.get(subjectType);

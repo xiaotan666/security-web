@@ -1,7 +1,7 @@
 package com.bytan.security.core.service;
 
 import com.bytan.security.core.AuthenticationRealm;
-import com.bytan.security.core.service.model.LoginModel;
+import com.bytan.security.core.service.model.LoginResponseModel;
 import com.bytan.security.core.SecurityManager;
 
 import java.util.Map;
@@ -29,18 +29,18 @@ public class AuthenticationService extends AbstractSecurityService {
     /**
      * 登录
      * @param param 请求携带的参数
-     * @return LoginModel 登录响应模型
+     * @return LoginResponseModel 登录响应模型
      */
-    public LoginModel login(Map<String, Object> param) {
+    public LoginResponseModel login(Map<String, Object> param) {
         String subjectId = securityManager.getAuthenticationProvider(this.getSubjectType())
                 .loadLoginSubjectId(param);
         String accessToken = securityManager.getAuthenticationRealm(this.getSubjectType())
                 .generateAccessToken(subjectId);
 
-        LoginModel loginModel = new LoginModel();
-        loginModel.setAccessToken(accessToken);
-        loginModel.setSubjectId(subjectId);
-        return loginModel;
+        LoginResponseModel model = new LoginResponseModel();
+        model.setAccessToken(accessToken);
+        model.setSubjectId(subjectId);
+        return model;
     }
 
     /**

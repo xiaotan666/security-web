@@ -4,12 +4,12 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 登录模型封装
+ * 登录响应模型封装
  * @Author：ByTan
  * @Email：tx1611235218@gmail.com
  * @Date：2025/3/6 18:01
  */
-public class LoginModel implements Serializable {
+public class LoginResponseModel implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -37,5 +37,13 @@ public class LoginModel implements Serializable {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    @Override
+    public String toString() {
+        return "LoginResponseModel{" +
+                "subjectId='" + subjectId + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                '}';
     }
 }

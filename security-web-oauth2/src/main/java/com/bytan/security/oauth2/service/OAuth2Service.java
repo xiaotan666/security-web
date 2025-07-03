@@ -1,20 +1,19 @@
 package com.bytan.security.oauth2.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.bytan.security.core.AuthenticationRealm;
 import com.bytan.security.core.config.AccessTokenConfig;
+import com.bytan.security.core.exception.AuthenticationException;
 import com.bytan.security.oauth2.Oauth2Realm;
 import com.bytan.security.oauth2.SecurityOauth2Manager;
-import com.bytan.security.oauth2.config.SecurityOauth2TokenConfig;
-import com.bytan.security.oauth2.model.AuthorizationModel;
+import com.bytan.security.oauth2.config.RefreshTokenConfig;
+import com.bytan.security.oauth2.model.AuthorizationResponseModel;
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.oauth2.dataloader.Oauth2DataLoader;
 import com.bytan.security.oauth2.grant.Oauth2Grant;
+import com.bytan.security.oauth2.model.RefreshTokenResponseModel;
+import io.jsonwebtoken.JwtException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * OAuth2业务类
@@ -38,21 +37,22 @@ public class OAuth2Service extends AbstractSecurityOauth2Service {
 
     /**
      * 授权业务
-     * @param clientId 客户端id
+     *
+     * @param clientId     客户端id
      * @param clientSecret 客户端密钥
-     * @param grantType 授权方式
-     * @param scopes 授权范围
-     * @param grantParam 授权参数
-     * @return AuthorizationModel
+     * @param grantType    授权方式
+     * @param scopes       授权范围
+     * @param grantParam   授权参数
+     * @return AuthorizationResponseModel 授权响应
      */
-    public AuthorizationModel authorization(String clientId, String clientSecret, String grantType, String[] scopes, Map<String, Object> grantParam) {
-        if (StrUtil.isBlank(clientId)) {
+    public AuthorizationResponseModel authorization(String clientId, String clientSecret, String grantType, String[] scopes, Map<String, Object> grantParam) {
+        if (clientId == null || clientId.isEmpty()) {
             throw new IllegalArgumentException("client_id不能为空");
         }
-        if (StrUtil.isBlank(clientSecret)) {
+        if (clientSecret == null || clientSecret.isEmpty()) {
             throw new IllegalArgumentException("client_secret不能为空");
         }
-        if (StrUtil.isBlank(grantType)) {
+        if (grantType == null || grantType.isEmpty()) {
             throw new IllegalArgumentException("grant_type不能为空");
         }
 
@@ -67,41 +67,81 @@ public class OAuth2Service extends AbstractSecurityOauth2Service {
         String subjectId = oauth2Grant.doMain(grantParam);
 
         SecurityManager securityManager = securityOauth2Manager.getSecurityManager();
-        //授权成功生成访问密钥
+        //授权成功生成访问令牌
         AuthenticationRealm authenticationRealm = securityManager.getAuthenticationRealm(subjectType);
-        AuthorizationModel model = new AuthorizationModel();
-        String accessToken = authenticationRealm.getAccessToken(subjectId);
+        AuthorizationResponseModel model = new AuthorizationResponseModel();
+        String accessToken = authenticationRealm.generateAccessToken(subjectId);
         model.setAccessToken(accessToken);
-        String refreshToken = oauth2Realm.getRefreshToken(subjectId);
+        //生成刷新令牌
+        String refreshToken = oauth2Realm.generateRefreshToken(subjectId);
         model.setRefreshToken(refreshToken);
-        AccessTokenConfig tokenConfig = securityManager.getTokenConfig(subjectType);
-        model.setExpiresIn(tokenConfig.getTimeout());
-        SecurityOauth2TokenConfig oauth2TokenConfig = securityOauth2Manager.getOauth2TokenConfig(subjectType);
-        model.setRefreshExpiresIn(oauth2TokenConfig.getRefreshTimeout());
 
-        //设置密钥权限
-        List<String> scopeList = new ArrayList<>();
+        //设置有效期
+        AccessTokenConfig accessTokenConfig = securityManager.getAccessTokenConfig(subjectType);
+        model.setExpiresIn(accessTokenConfig.getTimeout());
+        RefreshTokenConfig refreshTokenConfig = securityOauth2Manager.getRefreshTokenConfig(subjectType);
+        model.setRefreshExpiresIn(refreshTokenConfig.getTimeout());
+
+        //设置令牌授权范围
         if (scopes != null && scopes.length > 0) {
-            scopeList.addAll(Arrays.stream(scopes).toList());
+            Set<String> scopeSet = new HashSet<>(Arrays.stream(scopes).toList());
+            Oauth2DataLoader oauth2DataLoader = securityOauth2Manager.getOauth2DataLoader(subjectType);
+            oauth2DataLoader.setSubjectScope(subjectId, scopeSet);
+            model.setScope(scopeSet);
         }
-        model.setScope(scopeList);
-
-        //TODO 设置主体id的授权范围
-        Oauth2DataLoader oauth2DataLoader = securityOauth2Manager.getOauth2DataLoader(subjectType);
-        oauth2DataLoader.addSubjectScope(subjectId, scopeList);
 
         return model;
     }
 
     /**
-     * 更新访问密钥
-     * @param refreshToken 刷新密钥
-     * @return 访问密钥
+     * 刷新访问令牌
+     *
+     * @param refreshToken 刷新令牌
+     * @return 访问令牌
      */
-    public String refreshToken(String refreshToken) {
-        Oauth2Realm oauth2Realm = securityOauth2Manager.getOauth2Realm(subjectType);
-        String subjectId = oauth2Realm.parseRefreshToken(refreshToken);
+    public RefreshTokenResponseModel refreshToken(String refreshToken) {
+        if (refreshToken != null && !refreshToken.isEmpty()) {
+            throw new IllegalArgumentException("参数异常");
+        }
 
-        return oauth2Realm.getRefreshToken(subjectId);
+        Oauth2Realm oauth2Realm = securityOauth2Manager.getOauth2Realm(subjectType);
+        try {
+            //校验刷新令牌是否合法
+            String subjectId = oauth2Realm.parseRefreshToken(refreshToken);
+            if (subjectId != null && !subjectId.isEmpty()) {
+                Oauth2DataLoader oauth2DataLoader = securityOauth2Manager.getOauth2DataLoader(this.getSubjectType());
+                Set<String> subjectTokenList = oauth2DataLoader.getSubjectRefreshToken(subjectId);
+                boolean match = subjectTokenList.contains(refreshToken);
+                if (!match) {
+                    throw new AuthenticationException();
+                }
+            }
+            //校验通过则重新生成访问令牌
+            SecurityManager securityManager = securityOauth2Manager.getSecurityManager();
+            AuthenticationRealm authenticationRealm = securityManager.getAuthenticationRealm(subjectType);
+            RefreshTokenResponseModel model = new RefreshTokenResponseModel();
+            model.setAccessToken(authenticationRealm.generateAccessToken(subjectId));
+            AccessTokenConfig accessTokenConfig = securityManager.getAccessTokenConfig(subjectType);
+            model.setExpiresIn(accessTokenConfig.getTimeout());
+
+            return model;
+        } catch (JwtException e) {
+            throw new AuthenticationException();
+        }
+    }
+
+    /**
+     * 登出
+     * @param accessToken 访问令牌
+     * @param refreshToken 刷新令牌
+     * @param subjectId 主体id
+     */
+    public void logout(String accessToken, String refreshToken, String subjectId) {
+        Oauth2Realm oauth2Realm = securityOauth2Manager.getOauth2Realm(subjectType);
+        oauth2Realm.recycleRefreshToken(subjectId, refreshToken);
+
+        SecurityManager securityManager = securityOauth2Manager.getSecurityManager();
+        AuthenticationRealm authenticationRealm = securityManager.getAuthenticationRealm(this.getSubjectType());
+        authenticationRealm.recycleAccessToken(subjectId, accessToken);
     }
 }

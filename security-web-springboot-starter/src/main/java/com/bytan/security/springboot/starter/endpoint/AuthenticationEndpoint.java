@@ -7,7 +7,10 @@ import com.bytan.security.core.service.AuthenticationService;
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.subject.SubjectContext;
 import com.bytan.security.core.subject.SubjectType;
-import jakarta.annotation.Resource;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -15,30 +18,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 身份鉴权端点处理
+ * 身份鉴权功能端点
  * @Author: ByTan
  * @Eamil: tx1611235218@gmail.com
  * @Date: 2025/3/10  2:25
  */
-public abstract class AuthenticationEndpoint implements SubjectType {
+@RestController
+@RequestMapping("/authentication")
+@ConditionalOnMissingBean(AuthenticationEndpoint.class)
+public class AuthenticationEndpoint implements SubjectType {
 
-    @Resource
-    protected SecurityManager securityManager;
-    private AuthenticationService authenticationService;
+    private final SecurityManager securityManager;
+    private final AuthenticationService authenticationService;
 
-    /**
-     * 获取身份鉴权业务 懒加载实现，直接拿securityManager变量会报null
-     * @return AuthenticationService
-     */
-    protected AuthenticationService getAuthenticationService() {
-        if (authenticationService != null) {
-            return authenticationService;
-        }
-        if (securityManager != null) {
-            return authenticationService = new AuthenticationService(securityManager, this.getSubjectType());
-        }
-
-        throw new NullPointerException("核心管理器尚未加载...");
+    public AuthenticationEndpoint(SecurityManager securityManager) {
+        this.authenticationService = new AuthenticationService(securityManager, getSubjectType());
+        this.securityManager = securityManager;
     }
 
     /**
@@ -47,6 +42,7 @@ public abstract class AuthenticationEndpoint implements SubjectType {
      * @param response 响应
      * @return Object
      */
+    @GetMapping("/login")
     public Object login(SecurityRequest request, SecurityResponse response) {
         Map<String, Object> parameterMap = request.getParameterMap()
                 .entrySet()
@@ -54,7 +50,7 @@ public abstract class AuthenticationEndpoint implements SubjectType {
                 .flatMap(entry -> Arrays.stream(entry.getValue()).map(value -> new AbstractMap.SimpleEntry<>(entry.getKey(), value)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldVal, newVal) -> newVal));
 
-        return getAuthenticationService().login(parameterMap);
+        return authenticationService.login(parameterMap);
     }
 
     /**
@@ -63,11 +59,17 @@ public abstract class AuthenticationEndpoint implements SubjectType {
      * @param response 响应
      * @return Object
      */
+    @GetMapping("/logout")
     public Object logout(SecurityRequest request, SecurityResponse response) {
-        AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(this.getSubjectType());
+        AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(getSubjectType());
         String accessToken = request.getHeader(tokenConfig.getRequestHeader());
-        getAuthenticationService().logout(accessToken, SubjectContext.getSubjectId());
+        authenticationService.logout(accessToken, SubjectContext.getSubjectId());
 
         return "success";
+    }
+
+    @Override
+    public String getSubjectType() {
+        return SubjectType.USER;
     }
 }

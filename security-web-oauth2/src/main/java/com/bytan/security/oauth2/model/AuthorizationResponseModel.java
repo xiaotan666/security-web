@@ -2,43 +2,43 @@ package com.bytan.security.oauth2.model;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 /**
- * 授权服务模型
+ * 授权响应模型
  * @Author：ByTan
  * @Email：tx1611235218@gmail.com
  * @Date：2024/12/27 17:49
  */
-public class AuthorizationModel implements Serializable {
+public class AuthorizationResponseModel implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     /**
-     * 访问密钥
+     * 访问令牌
      */
     private String accessToken;
     /**
-     * 密钥类型
+     * 令牌类型
      */
     private String tokenType;
     /**
-     * 密钥有效时间
+     * 令牌有效时间
      */
     private Long expiresIn;
     /**
-     * 刷新密钥
+     * 刷新令牌
      */
     private String refreshToken;
     /**
-     * 刷新密钥有效时间
+     * 刷新令牌有效时间
      */
     private Long refreshExpiresIn;
     /**
      * 权限范围
      */
-    private List<String> scope;
+    private Set<String> scope;
 
     public String getAccessToken() {
         return accessToken;
@@ -80,11 +80,23 @@ public class AuthorizationModel implements Serializable {
         this.refreshExpiresIn = refreshExpiresIn;
     }
 
-    public List<String> getScope() {
+    public Set<String> getScope() {
         return scope;
     }
 
-    public void setScope(List<String> scope) {
+    public void setScope(Set<String> scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthorizationResponseModel{" +
+                "accessToken='" + accessToken + '\'' +
+                ", tokenType='" + tokenType + '\'' +
+                ", expiresIn=" + expiresIn +
+                ", refreshToken='" + refreshToken + '\'' +
+                ", refreshExpiresIn=" + refreshExpiresIn +
+                ", scope=" + scope +
+                '}';
     }
 }

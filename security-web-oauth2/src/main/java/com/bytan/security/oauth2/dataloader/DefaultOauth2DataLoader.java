@@ -1,6 +1,8 @@
 package com.bytan.security.oauth2.dataloader;
 
 
+import com.bytan.security.core.subject.SubjectType;
+
 /**
  * Oauth2数据加载器默认实现
  * @Author：ByTan
@@ -11,6 +13,6 @@ public class DefaultOauth2DataLoader extends Oauth2DataLoader {
 
     @Override
     public String getSubjectType() {
-        return "";
+        return SubjectType.USER;
     }
 }
