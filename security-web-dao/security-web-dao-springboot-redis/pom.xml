@@ -19,6 +19,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.bytan</groupId>
             <artifactId>security-web-core</artifactId>
             <version>${revision}</version>

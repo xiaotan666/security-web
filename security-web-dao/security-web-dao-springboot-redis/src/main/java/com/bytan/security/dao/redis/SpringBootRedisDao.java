@@ -4,7 +4,6 @@ import com.bytan.security.core.data.dao.SecurityDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.Map;
@@ -22,27 +21,23 @@ public class SpringBootRedisDao implements SecurityDao {
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public SpringBootRedisDao(RedisTemplate<String, Object> redisTemplate, RedisConnectionFactory connectionFactory) {
+    public SpringBootRedisDao(RedisConnectionFactory connectionFactory) {
         if (Objects.isNull(connectionFactory)) {
             throw new NullPointerException("redis连接信息为空");
         }
-        if (Objects.isNull(redisTemplate)) {
-            JdkSerializationRedisSerializer serializer = new JdkSerializationRedisSerializer();
 
-            RedisTemplate<String, Object> template = new RedisTemplate<>();
-            template.setConnectionFactory(connectionFactory);
-            // 使用StringRedisSerializer来序列化和反序列化redis的key值
-            template.setKeySerializer(new StringRedisSerializer());
-            template.setValueSerializer(serializer);
-            // Hash的key也采用StringRedisSerializer的序列化方式
-            template.setHashKeySerializer(new StringRedisSerializer());
-            template.setHashValueSerializer(serializer);
-            template.afterPropertiesSet();
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
 
-            this.redisTemplate = template;
-        } else {
-            this.redisTemplate = redisTemplate;
-        }
+        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+        FastJson2JsonRedisSerializer<Object> jsonSerializer = new FastJson2JsonRedisSerializer<>(Object.class);
+        template.setKeySerializer(stringSerializer);
+        template.setValueSerializer(jsonSerializer);
+        template.setHashKeySerializer(stringSerializer);
+        template.setHashValueSerializer(jsonSerializer);
+        template.afterPropertiesSet();
+
+        this.redisTemplate = template;
     }
 
     @Override

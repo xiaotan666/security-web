@@ -18,6 +18,7 @@
         <springboot.version>3.0.0</springboot.version>
         <caffeine.version>3.2.1</caffeine.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <fastjson2.version>2.0.57</fastjson2.version>
     </properties>
 
     <dependencyManagement>
@@ -59,6 +60,11 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

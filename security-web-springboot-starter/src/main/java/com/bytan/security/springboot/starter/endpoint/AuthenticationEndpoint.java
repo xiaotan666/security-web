@@ -7,7 +7,7 @@ import com.bytan.security.core.service.AuthenticationService;
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.subject.SubjectContext;
 import com.bytan.security.core.subject.SubjectType;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,12 +25,12 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/authentication")
-@ConditionalOnMissingBean(AuthenticationEndpoint.class)
 public class AuthenticationEndpoint implements SubjectType {
 
     private final SecurityManager securityManager;
     private final AuthenticationService authenticationService;
 
+    @Autowired
     public AuthenticationEndpoint(SecurityManager securityManager) {
         this.authenticationService = new AuthenticationService(securityManager, getSubjectType());
         this.securityManager = securityManager;

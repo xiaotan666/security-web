@@ -15,4 +15,9 @@ import java.lang.annotation.*;
 @Documented
 @Import(SecurityAutoConfigure.class)
 public @interface EnabledSecurityWeb {
+
+    /**
+     * 是否启用默认端点服务，默认关闭
+     */
+    boolean endpoint() default false;
 }

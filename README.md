@@ -21,7 +21,7 @@
 
 #### 使用说明
 1.  引入依赖
-2.  使用@EnabledSecurity注解标注至主程序入口中
+2.  使用@EnabledSecurityWeb注解标注至主程序入口中
 3.  启动项目即可
 4. 详情参考demo工程(https://github.com/xiaotan666/security-web/tree/master/security-web-demo)
 

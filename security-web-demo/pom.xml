@@ -15,6 +15,7 @@
 
     <modules>
         <module>security-web-springboot-demo</module>
+        <module>security-web-springboot-redis-demo</module>
     </modules>
 
 </project>

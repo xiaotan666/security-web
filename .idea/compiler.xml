@@ -7,11 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="security-web-oauth2" />
+        <module name="security-web-springboot-starter" />
         <module name="security-web-core" />
         <module name="security-web-springboot-demo" />
         <module name="security-web-dao-springboot-redis" />
-        <module name="security-web-springboot-starter" />
         <module name="security-web-oauth2-springboot-starter" />
+        <module name="security-web-springboot-redis-demo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -22,6 +23,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="security-web-springboot-demo" options="-parameters" />
+      <module name="security-web-springboot-redis-demo" options="-parameters" />
     </option>
   </component>
 </project>

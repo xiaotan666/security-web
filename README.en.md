@@ -21,7 +21,7 @@ Support for the oauth2 protocol is still under development (temporarily unavaila
 
 #### Instructions for use
 1. Introduce dependencies
-2. Use the @EnabledSecurity annotation to mark it in the main program entry
+2. Use the @EnabledSecurityWeb annotation to mark it in the main program entry
 3. Just start the project
 4. Details refer to the demo project (https://github.com/xiaotan666/security-web/tree/master/security-web-demo)
 
