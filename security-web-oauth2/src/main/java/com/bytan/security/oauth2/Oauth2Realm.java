@@ -14,9 +14,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Oauth2相关核心功能
@@ -109,8 +107,12 @@ public class Oauth2Realm implements SubjectType {
      * @param scopeList 授权范围列表
      * @return ture拥有
      */
-    public boolean hasAuthScope(String subjectId, Set<String> scopeList) {
-        return oauth2DataLoader.getSubjectScope(subjectId).containsAll(scopeList);
+    public boolean hasAuthScope(String subjectId, List<String> scopeList) {
+        List<String> subjectScope = oauth2DataLoader.getSubjectScope(subjectId);
+        List<String> isScopeList = new ArrayList<>(scopeList);
+
+        isScopeList.removeAll(subjectScope);
+        return isScopeList.isEmpty();
     }
 
     /**
@@ -128,13 +130,11 @@ public class Oauth2Realm implements SubjectType {
                 .signWith(signKey)
                 .compact();
         //加密签名结果
-        String jwe = Jwts.builder()
+        String accessToken = Jwts.builder()
                 .content(jws.getBytes(StandardCharsets.UTF_8), "application/jwt")
                 .encryptWith(encryptKey, Jwts.KEY.DIRECT, Jwts.ENC.A128CBC_HS256)
                 .compact();
 
-        String prefix = refreshTokenConfig.getPrefix();
-        String accessToken = prefix != null && !prefix.isEmpty() ? prefix + " " + jwe : jwe;
         addSubjectAccessToken(subjectId, accessToken);
         return accessToken;
     }
@@ -146,13 +146,10 @@ public class Oauth2Realm implements SubjectType {
      * @return 主体id
      */
     public String parseRefreshToken(String refreshToken) {
-        String prefix = refreshTokenConfig.getPrefix();
-        String token = prefix != null && !prefix.isEmpty() ?  refreshToken.substring(prefix.length() + 1) : refreshToken;
-
         byte[] jws = Jwts.parser()
                 .decryptWith(encryptKey)
                 .build()
-                .parseEncryptedContent(token)
+                .parseEncryptedContent(refreshToken)
                 .getPayload();
         Claims claims = Jwts.parser()
                 .verifyWith(signKey)
@@ -164,13 +161,27 @@ public class Oauth2Realm implements SubjectType {
     }
 
     /**
+     * 处理刷新令牌前缀
+     * @param requestRefreshToken 请求携带的刷新令牌
+     * @return 刷新令牌
+     */
+    public String preRefreshTokenPrefix(String requestRefreshToken) {
+        String prefix = refreshTokenConfig.getPrefix();
+        if (prefix != null && !requestRefreshToken.startsWith(prefix)) {
+            return null;
+        }
+
+        return prefix != null && !prefix.isEmpty() ? requestRefreshToken.substring(prefix.length() + 1) : requestRefreshToken;
+    }
+
+    /**
      * 回收刷新令牌
      * @param refreshToken 刷新令牌
      */
     public void recycleRefreshToken(String subjectId, String refreshToken) {
-        Set<String> subjectToken = oauth2DataLoader.getSubjectRefreshToken(subjectId);
+        List<String> subjectToken = oauth2DataLoader.getSubjectRefreshToken(subjectId);
         if (subjectToken == null) {
-            subjectToken = new HashSet<>();
+            subjectToken = new ArrayList<>();
         }
         subjectToken.remove(refreshToken);
         oauth2DataLoader.setSubjectRefreshToken(subjectId, subjectToken);
@@ -181,7 +192,7 @@ public class Oauth2Realm implements SubjectType {
      * @param subjectId 主体id
      */
     public void recycleRefreshTokenBySubject(String subjectId) {
-        oauth2DataLoader.setSubjectRefreshToken(subjectId, Set.of());
+        oauth2DataLoader.setSubjectRefreshToken(subjectId, new ArrayList<>());
     }
 
     /**
@@ -190,9 +201,9 @@ public class Oauth2Realm implements SubjectType {
      * @param refreshToken 刷新令牌
      */
     public void addSubjectAccessToken(String subjectId, String refreshToken) {
-        Set<String> subjectToken = oauth2DataLoader.getSubjectRefreshToken(subjectId);
+        List<String> subjectToken = oauth2DataLoader.getSubjectRefreshToken(subjectId);
         if (subjectToken == null) {
-            subjectToken = new HashSet<>();
+            subjectToken = new ArrayList<>();
         }
 
         subjectToken.add(refreshToken);

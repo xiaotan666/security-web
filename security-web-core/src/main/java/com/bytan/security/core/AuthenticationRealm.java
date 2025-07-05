@@ -101,8 +101,12 @@ public class AuthenticationRealm implements SubjectType {
      * @param permissionList 需要校验的权限列表
      * @return true拥有权限
      */
-    public boolean hasRolePermission(String role, Set<String> permissionList) {
-        return authenticationDataLoader.getRolePermission(role).containsAll(permissionList);
+    public boolean hasRolePermission(String role, List<String> permissionList) {
+        List<String> rolePermission = authenticationDataLoader.getRolePermission(role);
+        List<String> isPermissionList = new ArrayList<>(permissionList);
+
+        isPermissionList.removeAll(rolePermission);
+        return isPermissionList.isEmpty();
     }
 
     /**
@@ -125,8 +129,12 @@ public class AuthenticationRealm implements SubjectType {
      * @param roleList  需要校验的角色列表
      * @return true拥有权限
      */
-    public boolean hasSubjectRole(String subjectId, Set<String> roleList) {
-        return authenticationDataLoader.getSubjectRole(subjectId).containsAll(roleList);
+    public boolean hasSubjectRole(String subjectId, List<String> roleList) {
+        List<String> subjectRoleList = authenticationDataLoader.getSubjectRole(subjectId);
+        List<String> isRoleList = new ArrayList<>(roleList);
+
+        isRoleList.removeAll(subjectRoleList);
+        return isRoleList.isEmpty();
     }
 
     /**
@@ -137,7 +145,7 @@ public class AuthenticationRealm implements SubjectType {
      * @return true拥有权限
      */
     public boolean hasSubjectPermission(String subjectId, String permission) {
-        Set<String> roleList = authenticationDataLoader.getSubjectRole(subjectId);
+        List<String> roleList = authenticationDataLoader.getSubjectRole(subjectId);
         for (String role : roleList) {
             if (hasRolePermission(role, permission)) {
                 return true;
@@ -153,8 +161,8 @@ public class AuthenticationRealm implements SubjectType {
      * @param permissionList 需要校验的权限
      * @return true拥有权限
      */
-    public boolean hasSubjectPermission(String subjectId, Set<String> permissionList) {
-        Set<String> roleList = authenticationDataLoader.getSubjectRole(subjectId);
+    public boolean hasSubjectPermission(String subjectId, List<String> permissionList) {
+        List<String> roleList = authenticationDataLoader.getSubjectRole(subjectId);
         for (String role : roleList) {
             if (hasRolePermission(role, permissionList)) {
                 return true;
@@ -171,15 +179,17 @@ public class AuthenticationRealm implements SubjectType {
     public void isAuthentication(String accessToken) {
         if (accessToken != null && !accessToken.isEmpty()) {
             try {
-                String subjectId = parseAccessToken(accessToken);
-                if (subjectId != null && !subjectId.isEmpty()) {
-                    Set<String> subjectTokenList = authenticationDataLoader.getSubjectAccessToken(subjectId);
-                    boolean match = subjectTokenList.contains(accessToken);
-                    if (!match) {
-                        throw new AuthenticationException();
-                    }
-                    SubjectContext.setSubjectId(subjectId);
+                String token = preRefreshTokenPrefix(accessToken);
+                if (token == null) {
+                    throw new AuthenticationException("非法令牌");
                 }
+                String subjectId = parseAccessToken(token);
+                List<String> subjectTokenList = authenticationDataLoader.getSubjectAccessToken(subjectId);
+                boolean match = subjectTokenList.contains(token);
+                if (!match) {
+                    throw new AuthenticationException();
+                }
+                SubjectContext.setSubjectId(subjectId);
             } catch (JwtException e) {
                 throw new AuthenticationException();
             }
@@ -208,13 +218,11 @@ public class AuthenticationRealm implements SubjectType {
                 .signWith(signKey)
                 .compact();
         //加密签名结果
-        String jwe = Jwts.builder()
+        String accessToken = Jwts.builder()
                 .content(jws.getBytes(StandardCharsets.UTF_8), "application/jwt")
                 .encryptWith(encryptKey, Jwts.KEY.DIRECT, Jwts.ENC.A128CBC_HS256)
                 .compact();
 
-        String prefix = tokenConfig.getPrefix();
-        String accessToken = prefix != null && !prefix.isEmpty() ? prefix + " " + jwe : jwe;
         addSubjectAccessToken(subjectId, accessToken);
         return accessToken;
     }
@@ -226,13 +234,10 @@ public class AuthenticationRealm implements SubjectType {
      * @return 主体id
      */
     public String parseAccessToken(String accessToken) {
-        String prefix = tokenConfig.getPrefix();
-        String token = prefix != null && !prefix.isEmpty() ?  accessToken.substring(prefix.length() + 1) : accessToken;
-
         byte[] jws = Jwts.parser()
                 .decryptWith(encryptKey)
                 .build()
-                .parseEncryptedContent(token)
+                .parseEncryptedContent(accessToken)
                 .getPayload();
         Claims claims = Jwts.parser()
                 .verifyWith(signKey)
@@ -248,9 +253,9 @@ public class AuthenticationRealm implements SubjectType {
      * @param accessToken 访问令牌
      */
     public void recycleAccessToken(String subjectId, String accessToken) {
-        Set<String> subjectToken = authenticationDataLoader.getSubjectAccessToken(subjectId);
+        List<String> subjectToken = authenticationDataLoader.getSubjectAccessToken(subjectId);
         if (subjectToken == null) {
-            subjectToken = new HashSet<>();
+            subjectToken = new ArrayList<>();
         }
         subjectToken.remove(accessToken);
         authenticationDataLoader.setSubjectAccessToken(subjectId, subjectToken);
@@ -261,7 +266,7 @@ public class AuthenticationRealm implements SubjectType {
      * @param subjectId 主体id
      */
     public void recycleAccessTokenBySubject(String subjectId) {
-        authenticationDataLoader.setSubjectAccessToken(subjectId, Set.of());
+        authenticationDataLoader.setSubjectAccessToken(subjectId, new ArrayList<>());
     }
 
     /**
@@ -270,13 +275,27 @@ public class AuthenticationRealm implements SubjectType {
      * @param accessToken 访问令牌
      */
     public void addSubjectAccessToken(String subjectId, String accessToken) {
-        Set<String> subjectToken = authenticationDataLoader.getSubjectAccessToken(subjectId);
+        List<String> subjectToken = authenticationDataLoader.getSubjectAccessToken(subjectId);
         if (subjectToken == null) {
-            subjectToken = new HashSet<>();
+            subjectToken = new ArrayList<>();
         }
 
         subjectToken.add(accessToken);
         authenticationDataLoader.setSubjectAccessToken(subjectId, subjectToken);
+    }
+
+    /**
+     * 处理访问令牌前缀
+     * @param requestAccessToken 请求携带的访问令牌
+     * @return 访问令牌
+     */
+    public String preRefreshTokenPrefix(String requestAccessToken) {
+        String prefix = tokenConfig.getPrefix();
+        if (prefix != null && !requestAccessToken.startsWith(prefix)) {
+            return null;
+        }
+
+        return prefix != null && !prefix.isEmpty() ? requestAccessToken.substring(prefix.length() + 1) : requestAccessToken;
     }
 
     @Override

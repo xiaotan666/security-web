@@ -8,6 +8,7 @@ import com.bytan.security.oauth2.SecurityOauth2Manager;
 import com.bytan.security.oauth2.annotation.RequiresScope;
 import com.bytan.security.core.subject.SubjectContext;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.bytan.security.core.exception.AuthenticationException.NOT_PERMISSION;
@@ -36,7 +37,7 @@ public class RequiresScopeHandler extends Oauth2AnnotationHandler<RequiresScope>
         AuthenticationRealm authenticationRealm = getSubjectAuthenticationRealm(subjectType);
         authenticationRealm.isAuthentication(this.getRequestAccessToken(subjectType));
 
-        if (!oauth2Realm.hasAuthScope(SubjectContext.getSubjectId(), Set.of(annotation.value()))) {
+        if (!oauth2Realm.hasAuthScope(SubjectContext.getSubjectId(), List.of(annotation.value()))) {
             throw new AuthenticationException(NOT_PERMISSION);
         }
     }

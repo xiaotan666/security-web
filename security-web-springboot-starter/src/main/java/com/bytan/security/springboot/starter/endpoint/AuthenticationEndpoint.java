@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 身份鉴权功能端点
+ * 身份鉴权端点服务
  * @Author: ByTan
  * @Eamil: tx1611235218@gmail.com
  * @Date: 2025/3/10  2:25

@@ -4,30 +4,44 @@ import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.annotation.RequiresLogin;
 import com.bytan.security.core.annotation.RequiresPermissions;
 import com.bytan.security.core.annotation.RequiresRoles;
+import com.bytan.security.core.config.AccessTokenConfig;
 import com.bytan.security.core.http.SecurityRequest;
 import com.bytan.security.core.http.SecurityResponse;
+import com.bytan.security.core.service.AuthenticationService;
 import com.bytan.security.core.subject.SubjectContext;
 import com.bytan.security.core.subject.SubjectType;
-import com.bytan.security.springboot.starter.endpoint.AuthenticationEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
- * 自定义端点
+ * 自定义端点服务
  * @Author：ByTan
  * @Email：tx1611235218@gmail.com
  * @Date：2025/6/30 16:28
  */
 @Controller
 @RequestMapping("/admin")
-public class DemoController extends AuthenticationEndpoint {
+public class DemoController implements SubjectType {
+
+    private final DemoDataLoader demoDataLoader;
+    private final SecurityManager securityManager;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public DemoController(SecurityManager securityManager) {
-        super(securityManager);
+    public DemoController(SecurityManager securityManager, DemoDataLoader demoDataLoader) {
+        this.demoDataLoader = demoDataLoader;
+        this.authenticationService = new AuthenticationService(securityManager, getSubjectType());
+        this.securityManager = securityManager;
     }
 
     /**
@@ -48,7 +62,13 @@ public class DemoController extends AuthenticationEndpoint {
     @ResponseBody
     @GetMapping("/login")
     public Object login(SecurityRequest request, SecurityResponse response) {
-        return super.login(request, response);
+        Map<String, Object> parameterMap = request.getParameterMap()
+                .entrySet()
+                .stream()
+                .flatMap(entry -> Arrays.stream(entry.getValue()).map(value -> new AbstractMap.SimpleEntry<>(entry.getKey(), value)))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldVal, newVal) -> newVal));
+
+        return authenticationService.login(parameterMap);
     }
 
     /**
@@ -61,7 +81,10 @@ public class DemoController extends AuthenticationEndpoint {
     @ResponseBody
     @GetMapping("/logout")
     public Object logout(SecurityRequest request, SecurityResponse response) {
-        super.logout(request, response);
+        AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(getSubjectType());
+        String accessToken = request.getHeader(tokenConfig.getRequestHeader());
+        authenticationService.logout(accessToken, SubjectContext.getSubjectId());
+
         return "已登出账号";
     }
 
@@ -80,7 +103,7 @@ public class DemoController extends AuthenticationEndpoint {
      * 校验当前请求主体是否拥有该角色
      * @return 主体id （未登录则抛AuthenticationException异常）
      */
-    @RequiresRoles(value = {"admin"}, type = SubjectType.ADMIN)
+    @RequiresRoles(value = {"user"}, type = SubjectType.ADMIN)
     @ResponseBody
     @GetMapping("/is_role")
     public Object isRole() {
@@ -96,5 +119,17 @@ public class DemoController extends AuthenticationEndpoint {
     @GetMapping("/is_permissions")
     public Object isPermissions() {
         return SubjectContext.getSubjectId();
+    }
+
+    @RequiresLogin(type = SubjectType.ADMIN)
+    @ResponseBody
+    @GetMapping("/add_subject_role")
+    public Object addSubjectRole(@RequestParam String roleKey) {
+        String subjectId = SubjectContext.getSubjectId();
+        List<String> subjectRole = demoDataLoader.getSubjectRole(subjectId);
+        subjectRole.add(roleKey);
+        demoDataLoader.setSubjectRole(subjectId, subjectRole);
+
+        return "success";
     }
 }

@@ -2,7 +2,8 @@ package com.bytan.security.oauth2.model;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
+
 
 /**
  * 授权响应模型
@@ -38,7 +39,7 @@ public class AuthorizationResponseModel implements Serializable {
     /**
      * 权限范围
      */
-    private Set<String> scope;
+    private List<String> scope;
 
     public String getAccessToken() {
         return accessToken;
@@ -80,11 +81,11 @@ public class AuthorizationResponseModel implements Serializable {
         this.refreshExpiresIn = refreshExpiresIn;
     }
 
-    public Set<String> getScope() {
+    public List<String> getScope() {
         return scope;
     }
 
-    public void setScope(Set<String> scope) {
+    public void setScope(List<String> scope) {
         this.scope = scope;
     }
 

@@ -50,6 +50,6 @@ public class AuthenticationService extends AbstractSecurityService {
      */
     public void logout(String accessToken, String subjectId) {
         AuthenticationRealm authenticationRealm = securityManager.getAuthenticationRealm(this.getSubjectType());
-        authenticationRealm.recycleAccessToken(subjectId, accessToken);
+        authenticationRealm.recycleAccessToken(subjectId, authenticationRealm.preRefreshTokenPrefix(accessToken));
     }
 }

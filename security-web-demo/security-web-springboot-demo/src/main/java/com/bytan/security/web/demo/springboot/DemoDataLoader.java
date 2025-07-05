@@ -4,7 +4,7 @@ import com.bytan.security.core.data.loader.AuthenticationDataLoader;
 import com.bytan.security.core.subject.SubjectType;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * 自定义数据加载器
@@ -16,15 +16,15 @@ import java.util.Set;
 public class DemoDataLoader extends AuthenticationDataLoader {
 
     @Override
-    public Set<String> doGetRolePermission(String role) {
+    public List<String> doGetRolePermission(String role) {
         //加载角色关联的权限信息
-        return Set.of("permissions_admin");
+        return List.of("permissions_admin");
     }
 
     @Override
-    public Set<String> doGetSubjectRole(String subjectId) {
+    public List<String> doGetSubjectRole(String subjectId) {
         //加载主体关联的角色信息
-        return Set.of("admin");
+        return List.of("admin");
     }
 
     @Override

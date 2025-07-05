@@ -2,9 +2,10 @@ package com.bytan.security.core.data.loader;
 
 import com.bytan.security.core.data.dao.SecurityDao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -54,10 +55,10 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param role           角色信息
      * @param permissionList 权限信息
      */
-    public void setRolePermission(String role, Set<String> permissionList) {
+    public void setRolePermission(String role, List<String> permissionList) {
         setRolePermission(
                 new HashMap<String, Object>() {{
-                    put(role, permissionList);
+                    put(role, new ArrayList<String>(permissionList));
                 }}
         );
     }
@@ -68,7 +69,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param role 角色
      * @return 权限列表
      */
-    public Set<String> getRolePermission(String role) {
+    public List<String> getRolePermission(String role) {
         return securityDao.getByMap(buildLoaderKey(Role_Permission_Key), role);
     }
 
@@ -89,10 +90,10 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param subjectId 主体id
      * @param roleList  拥有的角色
      */
-    public void setSubjectRole(String subjectId, Set<String> roleList) {
+    public void setSubjectRole(String subjectId, List<String> roleList) {
         setSubjectRole(
                 new HashMap<String, Object>() {{
-                    put(subjectId, roleList);
+                    put(subjectId, new ArrayList<String>(roleList));
                 }}
         );
     }
@@ -103,7 +104,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param subjectId 主体id
      * @return 角色列表
      */
-    public Set<String> getSubjectRole(String subjectId) {
+    public List<String> getSubjectRole(String subjectId) {
         return securityDao.getByMap(buildLoaderKey(Subject_Role_Key), subjectId);
     }
 
@@ -112,9 +113,9 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param subjectId 主体id
      * @param tokenList 令牌列表
      */
-    public void setSubjectAccessToken(String subjectId, Set<String> tokenList) {
+    public void setSubjectAccessToken(String subjectId, List<String> tokenList) {
         String key = buildLoaderKey(Subject_AccessToken_Key);
-        securityDao.saveByMap(key, subjectId, tokenList);
+        securityDao.saveByMap(key, subjectId, new ArrayList<String>(tokenList));
         securityDao.expire(key, SecurityDao.NOT_EXPIRE);
     }
 
@@ -123,7 +124,7 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      * @param subjectId 主体id
      * @return 主体与访问令牌列表
      */
-    public Set<String> getSubjectAccessToken(String subjectId) {
+    public List<String> getSubjectAccessToken(String subjectId) {
         return securityDao.getByMap(buildLoaderKey(Subject_AccessToken_Key), subjectId);
     }
 }

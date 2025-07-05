@@ -3,8 +3,9 @@ package com.bytan.security.oauth2.dataloader;
 import com.bytan.security.core.data.dao.SecurityDao;
 import com.bytan.security.core.data.loader.InitializeDataLoader;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Oauth2内部缓存数据加载器
@@ -61,9 +62,9 @@ abstract class InteriorCacheOauth2DataLoader extends InitializeDataLoader {
      * @param subjectId 主体id
      * @param scopeList 授权范围列表
      */
-    public void setSubjectScope(String subjectId, Set<String> scopeList) {
+    public void setSubjectScope(String subjectId, List<String> scopeList) {
         String key = buildLoaderKey(Subject_Scope_Key);
-        securityDao.saveByMap(key, subjectId, scopeList);
+        securityDao.saveByMap(key, subjectId, new ArrayList<String>(scopeList));
         securityDao.expire(key, SecurityDao.NOT_EXPIRE);
     }
 
@@ -72,7 +73,7 @@ abstract class InteriorCacheOauth2DataLoader extends InitializeDataLoader {
      * @param subjectId 主体id
      * @return 授权范围列表
      */
-    public Set<String> getSubjectScope(String subjectId) {
+    public List<String> getSubjectScope(String subjectId) {
         return securityDao.getByMap(buildLoaderKey(Subject_Scope_Key), subjectId);
     }
 
@@ -81,9 +82,9 @@ abstract class InteriorCacheOauth2DataLoader extends InitializeDataLoader {
      * @param subjectId 主体id
      * @param tokenList 令牌列表
      */
-    public void setSubjectRefreshToken(String subjectId, Set<String> tokenList) {
+    public void setSubjectRefreshToken(String subjectId, List<String> tokenList) {
         String key = buildLoaderKey(Subject_RefreshToken_Key);
-        securityDao.saveByMap(key, subjectId, tokenList);
+        securityDao.saveByMap(key, subjectId, new ArrayList<String>(tokenList));
         securityDao.expire(key, SecurityDao.NOT_EXPIRE);
     }
 
@@ -92,7 +93,7 @@ abstract class InteriorCacheOauth2DataLoader extends InitializeDataLoader {
      * @param subjectId 主体id
      * @return 主体与刷新令牌列表
      */
-    public Set<String> getSubjectRefreshToken(String subjectId) {
+    public List<String> getSubjectRefreshToken(String subjectId) {
         return securityDao.getByMap(buildLoaderKey(Subject_RefreshToken_Key), subjectId);
     }
 

@@ -41,6 +41,7 @@ public abstract class AuthenticationAnnotationHandler<A extends Annotation> exte
     protected String getRequestAccessToken(String subjectType) {
         SecurityRequest request = securityManager.getHttpContext().getRequest();
         AccessTokenConfig tokenConfig = securityManager.getAccessTokenConfig(subjectType);
+
         return request.getHeader(tokenConfig.getRequestHeader());
     }
 }

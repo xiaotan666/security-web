@@ -1,7 +1,7 @@
 package com.bytan.security.oauth2.springboot.starter;
 
 import com.bytan.security.oauth2.SecurityOauth2Manager;
-import com.bytan.security.oauth2.springboot.starter.properties.Oauth2Properties;
+import com.bytan.security.oauth2.config.SecurityOauth2Config;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +19,7 @@ public class SecurityOauth2PropertiesAutoConfigure {
             prefix = "security.oauth2"
     )
     @Bean
-    public Oauth2Properties oauth2Properties() {
-        return new Oauth2Properties();
+    public SecurityOauth2Config securityOauth2Config() {
+        return new SecurityOauth2Config();
     }
 }
