@@ -10,6 +10,16 @@ import java.util.List;
  */
 public class DefaultAuthenticationDataLoader extends AuthenticationDataLoader {
 
+    private final String type;
+
+    public DefaultAuthenticationDataLoader() {
+        this(USER);
+    }
+
+    public DefaultAuthenticationDataLoader(String subjectType) {
+        this.type = subjectType;
+    }
+
     @Override
     public List<String> doGetRolePermission(String role) {
         return List.of();
@@ -22,6 +32,6 @@ public class DefaultAuthenticationDataLoader extends AuthenticationDataLoader {
 
     @Override
     public String getSubjectType() {
-        return USER;
+        return type;
     }
 }

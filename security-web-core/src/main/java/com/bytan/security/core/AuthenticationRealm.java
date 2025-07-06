@@ -270,6 +270,23 @@ public class AuthenticationRealm implements SubjectType {
     }
 
     /**
+     * 过滤过期令牌
+     * @param subjectId 主体id
+     */
+    public List<String> filterExpiredAccessToken(String subjectId, List<String> subjectAccessToken) {
+        return subjectAccessToken.stream()
+                .filter(token -> {
+                    try {
+                        parseAccessToken(token);
+                        return true;
+                    } catch (JwtException e) {
+                        return false;
+                    }
+                })
+                .toList();
+    }
+
+    /**
      * 添加主体令牌信息
      * @param subjectId 主体id
      * @param accessToken 访问令牌
@@ -281,7 +298,8 @@ public class AuthenticationRealm implements SubjectType {
         }
 
         subjectToken.add(accessToken);
-        authenticationDataLoader.setSubjectAccessToken(subjectId, subjectToken);
+        List<String> accessTokenList = filterExpiredAccessToken(subjectId, subjectToken);
+        authenticationDataLoader.setSubjectAccessToken(subjectId, accessTokenList);
     }
 
     /**

@@ -5,6 +5,7 @@ import com.bytan.security.core.config.SecurityConfig;
 import com.bytan.security.core.context.HttpContext;
 import com.bytan.security.core.data.loader.AuthenticationDataLoader;
 import com.bytan.security.core.data.dao.SecurityDao;
+import com.bytan.security.core.data.loader.DefaultAuthenticationDataLoader;
 import com.bytan.security.core.exception.NoConfigException;
 import com.bytan.security.core.provider.AuthenticationProvider;
 
@@ -67,10 +68,13 @@ public class SecurityManager {
     public AuthenticationDataLoader getAuthenticationDataLoader(String subjectType) {
         AuthenticationDataLoader authenticationDataLoader = this.authenticationDataLoaderStorage.get(subjectType);
         if (authenticationDataLoader == null) {
-            throw new NoConfigException("类型为 [" + subjectType + "] 的主体，尚未配置身份加载器");
+            authenticationDataLoader = new DefaultAuthenticationDataLoader(subjectType);
+            authenticationDataLoader.setSecurityDao(this.securityDao);
+            this.authenticationDataLoaderStorage.put(subjectType, authenticationDataLoader);
         }
 
         return authenticationDataLoader;
+
     }
 
     /**
