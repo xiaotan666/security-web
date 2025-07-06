@@ -4,7 +4,6 @@ import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.handler.AuthenticationAnnotationHandler;
 import com.bytan.security.springboot.starter.interceptor.AuthenticationAnnotationInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
@@ -16,7 +15,6 @@ import java.util.List;
  * @Eamil: tx1611235218@gmail.com
  * @Date: 2025/3/10  21:48
  */
-@ConditionalOnBean(SecurityManager.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true) // 启用CGLIB代理
 public class SecurityInterceptorAutoConfigure {
 
