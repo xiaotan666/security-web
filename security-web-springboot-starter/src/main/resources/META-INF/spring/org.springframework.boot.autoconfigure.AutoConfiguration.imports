@@ -1,3 +1,5 @@
 com.bytan.security.springboot.starter.SecurityDaoAutoConfigure
+com.bytan.security.springboot.starter.SecurityInterceptorAutoConfigure
 com.bytan.security.springboot.starter.SecurityHttpContextAutoConfigure
 com.bytan.security.springboot.starter.web.WebMvcConfigurer
+com.bytan.security.springboot.starter.endpoint.EndpointAutoConfigure

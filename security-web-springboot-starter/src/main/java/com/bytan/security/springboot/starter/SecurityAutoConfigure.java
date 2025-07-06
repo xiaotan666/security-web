@@ -6,7 +6,6 @@ import com.bytan.security.core.data.loader.AuthenticationDataLoader;
 import com.bytan.security.core.data.dao.SecurityDao;
 import com.bytan.security.core.SecurityManager;
 import com.bytan.security.core.provider.AuthenticationProvider;
-import com.bytan.security.springboot.starter.endpoint.EndpointAutoConfigure;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * @Email：tx1611235218@gmail.com
  * @Date：2024/12/26 16:45
  */
-@Import({ SecurityInterceptorAutoConfigure.class, SecurityPropertiesAutoConfigure.class, EndpointAutoConfigure.class })
+@Import(value = { SecurityPropertiesAutoConfigure.class })
 public class SecurityAutoConfigure {
 
     @Bean
