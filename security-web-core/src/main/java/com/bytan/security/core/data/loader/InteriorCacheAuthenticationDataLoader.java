@@ -74,6 +74,14 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
     }
 
     /**
+     * 清空角色权限信息
+     * @param role 主体id
+     */
+    public void clearRolePermission(String role) {
+        securityDao.deleteByMap(buildLoaderKey(Role_Permission_Key), role);
+    }
+
+    /**
      * 设置主体角色信息
      *
      * @param subjectRoleMap 主体角色信息
@@ -109,6 +117,14 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
     }
 
     /**
+     * 清空主体角色信息
+     * @param subjectId 主体id
+     */
+    public void clearSubjectRole(String subjectId) {
+        securityDao.deleteByMap(buildLoaderKey(Subject_Role_Key), subjectId);
+    }
+
+    /**
      * 设置主体与访问令牌信息
      * @param subjectId 主体id
      * @param tokenList 令牌列表
@@ -126,5 +142,13 @@ abstract class InteriorCacheAuthenticationDataLoader extends InitializeDataLoade
      */
     public List<String> getSubjectAccessToken(String subjectId) {
         return securityDao.getByMap(buildLoaderKey(Subject_AccessToken_Key), subjectId);
+    }
+
+    /**
+     * 清空主体访问令牌信息
+     * @param subjectId 主体id
+     */
+    public void clearSubjectAccessToken(String subjectId) {
+        securityDao.deleteByMap(buildLoaderKey(Subject_AccessToken_Key), subjectId);
     }
 }

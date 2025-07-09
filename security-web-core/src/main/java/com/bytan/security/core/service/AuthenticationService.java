@@ -1,6 +1,7 @@
 package com.bytan.security.core.service;
 
 import com.bytan.security.core.AuthenticationRealm;
+import com.bytan.security.core.data.loader.AuthenticationDataLoader;
 import com.bytan.security.core.service.model.LoginResponseModel;
 import com.bytan.security.core.SecurityManager;
 
@@ -51,5 +52,15 @@ public class AuthenticationService extends AbstractSecurityService {
     public void logout(String accessToken, String subjectId) {
         AuthenticationRealm authenticationRealm = securityManager.getAuthenticationRealm(this.getSubjectType());
         authenticationRealm.recycleAccessToken(subjectId, authenticationRealm.preRefreshTokenPrefix(accessToken));
+    }
+
+    /**
+     * 删除主体
+     * @param subjectId 主体id
+     */
+    public void removeSubject(String subjectId) {
+        AuthenticationDataLoader authenticationDataLoader = securityManager.getAuthenticationDataLoader(this.getSubjectType());
+        authenticationDataLoader.clearSubjectAccessToken(subjectId);
+        authenticationDataLoader.clearSubjectRole(subjectId);
     }
 }

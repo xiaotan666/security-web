@@ -250,6 +250,7 @@ public class AuthenticationRealm implements SubjectType {
 
     /**
      * 回收访问令牌
+     * @param subjectId 主体id
      * @param accessToken 访问令牌
      */
     public void recycleAccessToken(String subjectId, String accessToken) {
@@ -271,9 +272,9 @@ public class AuthenticationRealm implements SubjectType {
 
     /**
      * 过滤过期令牌
-     * @param subjectId 主体id
+     * @param subjectAccessToken 访问令牌列表
      */
-    public List<String> filterExpiredAccessToken(String subjectId, List<String> subjectAccessToken) {
+    private List<String> filterExpiredAccessToken(List<String> subjectAccessToken) {
         return subjectAccessToken.stream()
                 .filter(token -> {
                     try {
@@ -298,7 +299,7 @@ public class AuthenticationRealm implements SubjectType {
         }
 
         subjectToken.add(accessToken);
-        List<String> accessTokenList = filterExpiredAccessToken(subjectId, subjectToken);
+        List<String> accessTokenList = filterExpiredAccessToken(subjectToken);
         authenticationDataLoader.setSubjectAccessToken(subjectId, accessTokenList);
     }
 
